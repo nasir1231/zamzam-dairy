@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Afternoon Entry — ZamZam Dairy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
+    .header {
+      background: #1a5c2a;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title { text-align: center; flex: 1; }
+    .header-title h1 { font-size: 18px; font-weight: 700; }
+    .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+    .btn-back {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .date-bar {
+      background: #e8f5e9;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #1a5c2a;
+      font-weight: 600;
+      border-bottom: 1px solid #c8e6c9;
+    }
+    .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a5c2a;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f5e9;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group { margin-bottom: 15px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: #1a5c2a; }
+    .supplier-entry {
+      background: #f9fef9;
+      border: 1px solid #e8f5e9;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .supplier-entry .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffe8e8;
+      color: #c0392b;
+      border: none;
+      border-radius: 5px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .btn-add-supplier {
+      width: 100%;
+      padding: 10px;
+      background: #e8f5e9;
+      color: #1a5c2a;
+      border: 2px dashed #1a5c2a;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+    .btn-add-supplier:hover { background: #d0ebd0; }
+    .total-display {
+      background: #e8f5e9;
+      border-radius: 8px;
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #1a5c2a;
+    }
+    .btn-save {
+      width: 100%;
+      padding: 13px;
+      background: #1a5c2a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-save:hover { background: #144d22; }
+    .btn-save:disabled { background: #aaa; cursor: not-allowed; }
+    .success-msg {
+      background: #e8f5e9;
+      color: #1a5c2a;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .error-msg {
+      background: #ffe8e8;
+      color: #c0392b;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .footer {
+      background: #1a5c2a;
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+      font-size: 12px;
+    }
+    .footer a { color: #a8d5b5; text-decoration: none; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="dashboard.html" class="btn-back">← Back</a>
+    <div class="header-title">
+      <h1>☀️ Afternoon Entry</h1>
+      <p>1pm Stock Check & Supply</p>
+    </div>
+    <div style="width:70px"></div>
+  </div>
+
+  <div class="date-bar" id="dateBar">Loading...</div>
+
+  <div class="main">
+
+    <!-- Current Stock Check -->
+    <div class="card">
+      <div class="card-title">📦 Current Stock at 1pm</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Milk Available (kg)</label>
+          <input type="number" id="openingMilk" placeholder="0.00" step="0.01" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Yogurt Available (kg)</label>
+          <input type="number" id="openingYogurt" placeholder="0.00" step="0.01" min="0" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Afternoon Supply -->
+    <div class="card">
+      <div class="card-title">🚜 Afternoon Milk Supply</div>
+      <div id="suppliersList"></div>
+      <button class="btn-add-supplier" onclick="addSupplierEntry()">+ Add Supplier</button>
+      <div class="total-display">
+        <span>Total Milk Received:</span>
+        <span id="totalMilk">0.00 kg</span>
+      </div>
+      <div class="total-display">
+        <span>Total Purchase Amount:</span>
+        <span id="totalAmount">Rs 0</span>
+      </div>
+    </div>
+
+    <div class="success-msg" id="successMsg">✅ Afternoon entry saved successfully!</div>
+    <div class="error-msg" id="errorMsg"></div>
+
+    <button class="btn-save" id="saveBtn" onclick="saveAfternoonEntry()">💾 Save Afternoon Entry</button>
+
+  </div>
+
+  <div class="footer">
+    📞 0300-4455771 &nbsp;|&nbsp; ✉️ admin@subzi.pk &nbsp;|&nbsp; 🌐 <a href="https://subzi.pk">subzi.pk</a>
+  </div>
+
+  <script>
+    let suppliers = [];
+    let supplierEntries = [];
+
+    window.addEventListener('load', async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
+
+      const { data } = await supabase.from('suppliers').select('*').eq('is_active', true).order('name');
+      suppliers = data || [];
+      addSupplierEntry();
+    });
+
+    function addSupplierEntry() {
+      const id = Date.now();
+      supplierEntries.push(id);
+      const div = document.createElement('div');
+      div.className = 'supplier-entry';
+      div.id = 'entry-' + id;
+
+      let options = '<option value="">-- Select Supplier --</option>';
+      suppliers.forEach(s => {
+        options += `<option value="${s.id}" data-price="${s.price_per_kg}">${s.name} (Rs ${s.price_per_kg}/kg)</option>`;
+      });
+
+      div.innerHTML = `
+        <button class="remove-btn" onclick="removeEntry(${id})">✕ Remove</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Supplier</label>
+            <select onchange="updateTotals()" id="supplier-${id}">${options}</select>
+          </div>
+          <div class="form-group">
+            <label>Quantity (kg)</label>
+            <input type="number" id="qty-${id}" placeholder="0.00" step="0.01" min="0" oninput="updateTotals()" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Price per kg (Rs)</label>
+            <input type="number" id="price-${id}" placeholder="0.00" step="0.01" min="0" oninput="updateTotals()" />
+          </div>
+          <div class="form-group">
+            <label>Subtotal</label>
+            <input type="text" id="subtotal-${id}" placeholder="Rs 0" readonly style="background:#f5f5f5;" />
+          </div>
+        </div>
+      `;
+      document.getElementById('suppliersList').appendChild(div);
+
+      document.getElementById('supplier-' + id).addEventListener('change', function() {
+        const price = this.options[this.selectedIndex].getAttribute('data-price');
+        if (price) document.getElementById('price-' + id).value = price;
+        updateTotals();
+      });
+    }
+
+    function removeEntry(id) {
+      supplierEntries = supplierEntries.filter(e => e !== id);
+      document.getElementById('entry-' + id).remove();
+      updateTotals();
+    }
+
+    function updateTotals() {
+      let totalMilk = 0, totalAmount = 0;
+      supplierEntries.forEach(id => {
+        const qty = parseFloat(document.getElementById('qty-' + id)?.value) || 0;
+        const price = parseFloat(document.getElementById('price-' + id)?.value) || 0;
+        const subtotal = qty * price;
+        totalMilk += qty;
+        totalAmount += subtotal;
+        if (document.getElementById('subtotal-' + id))
+          document.getElementById('subtotal-' + id).value = 'Rs ' + subtotal.toLocaleString();
+      });
+      document.getElementById('totalMilk').textContent = totalMilk.toFixed(2) + ' kg';
+      document.getElementById('totalAmount').textContent = 'Rs ' + totalAmount.toLocaleString();
+    }
+
+    async function saveAfternoonEntry() {
+      const btn = document.getElementById('saveBtn');
+      const successMsg = document.getElementById('successMsg');
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      const openingMilk = parseFloat(document.getElementById('openingMilk').value) || 0;
+      const openingYogurt = parseFloat(document.getElementById('openingYogurt').value) || 0;
+
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const month = now.getMonth() + 1;
+      const year = now.getFullYear();
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session.user.id;
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const { data: sessionData, error: sessionError } = await supabase
+        .from('stock_sessions')
+        .insert({
+          session_date: today,
+          session_type: 'afternoon',
+          opening_milk_kg: openingMilk,
+          opening_yogurt_kg: openingYogurt,
+          created_by: userId
+        })
+        .select()
+        .single();
+
+      if (sessionError) {
+        errorMsg.textContent = 'Error: ' + sessionError.message;
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '💾 Save Afternoon Entry';
+        return;
+      }
+
+      for (const id of supplierEntries) {
+        const supplierId = document.getElementById('supplier-' + id)?.value;
+        const qty = parseFloat(document.getElementById('qty-' + id)?.value) || 0;
+        const price = parseFloat(document.getElementById('price-' + id)?.value) || 0;
+        if (!supplierId || qty === 0) continue;
+
+        await supabase.from('purchases').insert({
+          session_id: sessionData.id,
+          supplier_id: supplierId,
+          purchase_date: today,
+          month, year,
+          quantity_kg: qty,
+          price_per_kg: price,
+          created_by: userId
+        });
+
+        const { data: existing } = await supabase
+          .from('supplier_monthly_accounts')
+          .select('*')
+          .eq('supplier_id', supplierId)
+          .eq('month', month)
+          .eq('year', year)
+          .single();
+
+        if (existing) {
+          await supabase.from('supplier_monthly_accounts')
+            .update({ total_purchased: existing.total_purchased + (qty * price) })
+            .eq('id', existing.id);
+        } else {
+          await supabase.from('supplier_monthly_accounts').insert({
+            supplier_id: supplierId, month, year,
+            total_purchased: qty * price, total_paid: 0
+          });
+        }
+      }
+
+      successMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '💾 Save Afternoon Entry';
+      document.getElementById('openingMilk').value = '';
+      document.getElementById('openingYogurt').value = '';
+      document.getElementById('suppliersList').innerHTML = '';
+      supplierEntries = [];
+      addSupplierEntry();
+      updateTotals();
+    }
+  </script>
+
+</body>
+</html>
