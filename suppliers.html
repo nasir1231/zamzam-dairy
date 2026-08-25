@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suppliers — ZamZam Dairy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
+    .header {
+      background: #1a5c2a;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title { text-align: center; flex: 1; }
+    .header-title h1 { font-size: 18px; font-weight: 700; }
+    .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+    .btn-back {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .date-bar {
+      background: #e8f5e9;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #1a5c2a;
+      font-weight: 600;
+      border-bottom: 1px solid #c8e6c9;
+    }
+    .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a5c2a;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f5e9;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group { margin-bottom: 15px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-group input:focus { border-color: #1a5c2a; }
+    .btn-save {
+      width: 100%;
+      padding: 13px;
+      background: #1a5c2a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-save:hover { background: #144d22; }
+    .btn-save:disabled { background: #aaa; cursor: not-allowed; }
+    .success-msg {
+      background: #e8f5e9;
+      color: #1a5c2a;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .error-msg {
+      background: #ffe8e8;
+      color: #c0392b;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .supplier-card {
+      border: 1px solid #e8f5e9;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+      background: #fafffe;
+    }
+    .supplier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .supplier-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a5c2a;
+    }
+    .supplier-price {
+      background: #e8f5e9;
+      color: #1a5c2a;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .supplier-info {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 10px;
+    }
+    .supplier-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-payment {
+      flex: 1;
+      padding: 8px;
+      background: #1a5c2a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-payment:hover { background: #144d22; }
+    .btn-edit {
+      padding: 8px 14px;
+      background: #e8f5e9;
+      color: #1a5c2a;
+      border: 1px solid #c8e6c9;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-deactivate {
+      padding: 8px 14px;
+      background: #ffe8e8;
+      color: #c0392b;
+      border: 1px solid #ffcdd2;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .monthly-balance {
+      background: #f9f9f9;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .balance-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+    .balance-row .lbl { color: #777; }
+    .balance-row .val { font-weight: 600; color: #333; }
+    .balance-row.due .val { color: #c0392b; }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .modal h3 { color: #1a5c2a; margin-bottom: 15px; font-size: 16px; }
+    .modal .form-group { margin-bottom: 12px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
+    .btn-modal-save {
+      flex: 1;
+      padding: 10px;
+      background: #1a5c2a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 10px;
+      background: #f5f5f5;
+      color: #555;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .footer {
+      background: #1a5c2a;
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+      font-size: 12px;
+    }
+    .footer a { color: #a8d5b5; text-decoration: none; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="dashboard.html" class="btn-back">← Back</a>
+    <div class="header-title">
+      <h1>🚜 Suppliers</h1>
+      <p>Manage & Payments</p>
+    </div>
+    <div style="width:70px"></div>
+  </div>
+
+  <div class="date-bar" id="dateBar">Loading...</div>
+
+  <div class="main">
+
+    <!-- Add Supplier -->
+    <div class="card">
+      <div class="card-title">➕ Add New Supplier</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Supplier Name</label>
+          <input type="text" id="supName" placeholder="Full name" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="supPhone" placeholder="03xx-xxxxxxx" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Price per kg (Rs)</label>
+        <input type="number" id="supPrice" placeholder="e.g. 180" step="0.01" min="0" />
+      </div>
+      <div class="success-msg" id="addSuccess">✅ Supplier added successfully!</div>
+      <div class="error-msg" id="addError"></div>
+      <button class="btn-save" id="addBtn" onclick="addSupplier()">➕ Add Supplier</button>
+    </div>
+
+    <!-- Suppliers List -->
+    <div class="card">
+      <div class="card-title">📋 Active Suppliers — This Month's Accounts</div>
+      <div id="suppliersList">
+        <p style="color:#888; font-size:13px; text-align:center; padding:15px;">Loading...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+      <h3>💰 Record Payment</h3>
+      <p id="modalSupplierName" style="color:#555; font-size:13px; margin-bottom:15px;"></p>
+      <div class="form-group">
+        <label>Amount (Rs)</label>
+        <input type="number" id="modalAmount" placeholder="Enter amount" min="0" />
+      </div>
+      <div class="form-group">
+        <label>Payment Type</label>
+        <select id="modalPaymentType" style="width:100%; padding:10px 12px; border:1.5px solid #ddd; border-radius:8px; font-size:14px; outline:none;">
+          <option value="partial">Partial Payment</option>
+          <option value="full">Full Payment</option>
+          <option value="daily_cash">Daily Cash</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <input type="text" id="modalNotes" placeholder="Any notes..." />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-modal-save" onclick="savePayment()">💾 Save Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    📞 0300-4455771 &nbsp;|&nbsp; ✉️ admin@subzi.pk &nbsp;|&nbsp; 🌐 <a href="https://subzi.pk">subzi.pk</a>
+  </div>
+
+  <script>
+    let currentSupplierId = null;
+    let currentMonth, currentYear;
+
+    window.addEventListener('load', async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+
+      const now = new Date();
+      currentMonth = now.getMonth() + 1;
+      currentYear = now.getFullYear();
+
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
+
+      loadSuppliers();
+    });
+
+    async function addSupplier() {
+      const name = document.getElementById('supName').value.trim();
+      const phone = document.getElementById('supPhone').value.trim();
+      const price = parseFloat(document.getElementById('supPrice').value) || 0;
+      const btn = document.getElementById('addBtn');
+      const successMsg = document.getElementById('addSuccess');
+      const errorMsg = document.getElementById('addError');
+
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      if (!name) { errorMsg.textContent = 'Please enter supplier name.'; errorMsg.style.display = 'block'; return; }
+      if (price === 0) { errorMsg.textContent = 'Please enter price per kg.'; errorMsg.style.display = 'block'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const { error } = await supabase.from('suppliers').insert({ name, phone, price_per_kg: price });
+
+      if (error) {
+        errorMsg.textContent = 'Error: ' + error.message;
+        errorMsg.style.display = 'block';
+      } else {
+        successMsg.style.display = 'block';
+        document.getElementById('supName').value = '';
+        document.getElementById('supPhone').value = '';
+        document.getElementById('supPrice').value = '';
+        loadSuppliers();
+      }
+
+      btn.disabled = false;
+      btn.textContent = '➕ Add Supplier';
+    }
+
+    async function loadSuppliers() {
+      const { data: suppliers } = await supabase
+        .from('suppliers')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+
+      const container = document.getElementById('suppliersList');
+
+      if (!suppliers || suppliers.length === 0) {
+        container.innerHTML = '<p style="color:#888; font-size:13px; text-align:center; padding:15px;">No suppliers added yet.</p>';
+        return;
+      }
+
+      let html = '';
+      for (const s of suppliers) {
+        const { data: account } = await supabase
+          .from('supplier_monthly_accounts')
+          .select('*')
+          .eq('supplier_id', s.id)
+          .eq('month', currentMonth)
+          .eq('year', currentYear)
+          .single();
+
+        const purchased = account?.total_purchased || 0;
+        const paid = account?.total_paid || 0;
+        const balance = purchased - paid;
+
+        html += `
+          <div class="supplier-card">
+            <div class="supplier-header">
+              <span class="supplier-name">🚜 ${s.name}</span>
+              <span class="supplier-price">Rs ${s.price_per_kg}/kg</span>
+            </div>
+            <div class="supplier-info">📞 ${s.phone || 'No phone'}</div>
+            <div class="monthly-balance">
+              <div class="balance-row">
+                <span class="lbl">Total Purchased</span>
+                <span class="val">Rs ${purchased.toLocaleString()}</span>
+              </div>
+              <div class="balance-row">
+                <span class="lbl">Total Paid</span>
+                <span class="val">Rs ${paid.toLocaleString()}</span>
+              </div>
+              <div class="balance-row due">
+                <span class="lbl">Balance Due</span>
+                <span class="val">Rs ${balance.toLocaleString()}</span>
+              </div>
+            </div>
+            <div class="supplier-actions" style="margin-top:10px;">
+              <button class="btn-payment" onclick="openPaymentModal('${s.id}', '${s.name}')">💰 Record Payment</button>
+              <button class="btn-deactivate" onclick="deactivateSupplier('${s.id}')">✕ Remove</button>
+            </div>
+          </div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function openPaymentModal(supplierId, supplierName) {
+      currentSupplierId = supplierId;
+      document.getElementById('modalSupplierName').textContent = 'Supplier: ' + supplierName;
+      document.getElementById('modalAmount').value = '';
+      document.getElementById('modalNotes').value = '';
+      document.getElementById('paymentModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('paymentModal').classList.remove('show');
+      currentSupplierId = null;
+    }
+
+    async function savePayment() {
+      const amount = parseFloat(document.getElementById('modalAmount').value) || 0;
+      const paymentType = document.getElementById('modalPaymentType').value;
+      const notes = document.getElementById('modalNotes').value;
+
+      if (amount === 0) { alert('Please enter payment amount.'); return; }
+
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session.user.id;
+
+      await supabase.from('supplier_payments').insert({
+        supplier_id: currentSupplierId,
+        payment_date: today,
+        month: currentMonth,
+        year: currentYear,
+        amount,
+        payment_type: paymentType,
+        notes,
+        created_by: userId
+      });
+
+      const { data: account } = await supabase
+        .from('supplier_monthly_accounts')
+        .select('*')
+        .eq('supplier_id', currentSupplierId)
+        .eq('month', currentMonth)
+        .eq('year', currentYear)
+        .single();
+
+      if (account) {
+        await supabase.from('supplier_monthly_accounts')
+          .update({ total_paid: account.total_paid + amount })
+          .eq('id', account.id);
+      } else {
+        await supabase.from('supplier_monthly_accounts').insert({
+          supplier_id: currentSupplierId,
+          month: currentMonth,
+          year: currentYear,
+          total_purchased: 0,
+          total_paid: amount
+        });
+      }
+
+      closeModal();
+      loadSuppliers();
+    }
+
+    async function deactivateSupplier(id) {
+      if (!confirm('Remove this supplier from active list?')) return;
+      await supabase.from('suppliers').update({ is_active: false }).eq('id', id);
+      loadSuppliers();
+    }
+  </script>
+
+</body>
+</html>
