@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customers — ZamZam Dairy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
+    .header {
+      background: #1a5c2a;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title { text-align: center; flex: 1; }
+    .header-title h1 { font-size: 18px; font-weight: 700; }
+    .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+    .btn-back {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .date-bar {
+      background: #e8f5e9;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #1a5c2a;
+      font-weight: 600;
+      border-bottom: 1px solid #c8e6c9;
+    }
+    .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a5c2a;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f5e9;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group { margin-bottom: 15px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-group input:focus { border-color: #1a5c2a; }
+    .btn-save {
+      width: 100%;
+      padding: 13px;
+      background: #1a5c2a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-save:hover { background: #144d22; }
+    .btn-save:disabled { background: #aaa; cursor: not-allowed; }
+    .success-msg {
+      background: #e8f5e9;
+      color: #1a5c2a;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .error-msg {
+      background: #ffe8e8;
+      color: #c0392b;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .customer-card {
+      border: 1px solid #e8f5e9;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+      background: #fafffe;
+    }
+    .customer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .customer-name { font-size: 16px; font-weight: 700; color: #1a5c2a; }
+    .customer-rate {
+      background: #e8f5e9;
+      color: #1a5c2a;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .customer-info { font-size: 13px; color: #777; margin-bottom: 10px; }
+    .monthly-balance {
+      background: #f9f9f9;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .balance-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+    .balance-row .lbl { color: #777; }
+    .balance-row .val { font-weight: 600; color: #333; }
+    .balance-row.due .val { color: #c0392b; }
+    .balance-row.paid-val .val { color: #1a5c2a; }
+    .prev-months { margin-top: 8px; }
+    .prev-month-item {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 12px;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .prev-month-item .month-label { color: #795548; font-weight: 600; }
+    .prev-month-item .month-balance { color: #c0392b; font-weight: 700; }
+    .customer-actions { display: flex; gap: 8px; }
+    .btn-payment {
+      flex: 1;
+      padding: 8px;
+      background: #1a5c2a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-payment:hover { background: #144d22; }
+    .btn-deactivate {
+      padding: 8px 14px;
+      background: #ffe8e8;
+      color: #c0392b;
+      border: 1px solid #ffcdd2;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .modal h3 { color: #1a5c2a; margin-bottom: 15px; font-size: 16px; }
+    .modal .form-group { margin-bottom: 12px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
+    .btn-modal-save {
+      flex: 1;
+      padding: 10px;
+      background: #1a5c2a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 10px;
+      background: #f5f5f5;
+      color: #555;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .footer {
+      background: #1a5c2a;
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+      font-size: 12px;
+    }
+    .footer a { color: #a8d5b5; text-decoration: none; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="dashboard.html" class="btn-back">← Back</a>
+    <div class="header-title">
+      <h1>👥 Customers</h1>
+      <p>Credit Accounts & Payments</p>
+    </div>
+    <div style="width:70px"></div>
+  </div>
+
+  <div class="date-bar" id="dateBar">Loading...</div>
+
+  <div class="main">
+
+    <!-- Add Customer -->
+    <div class="card">
+      <div class="card-title">➕ Add New Customer</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Customer Name</label>
+          <input type="text" id="cusName" placeholder="Full name" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="cusPhone" placeholder="03xx-xxxxxxx" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" id="cusAddress" placeholder="House no, street, area" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Milk Rate (Rs/kg)</label>
+          <input type="number" id="cusMilkRate" value="280" step="0.01" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Yogurt Rate (Rs/kg)</label>
+          <input type="number" id="cusYogurtRate" value="260" step="0.01" min="0" />
+        </div>
+      </div>
+      <div class="success-msg" id="addSuccess">✅ Customer added successfully!</div>
+      <div class="error-msg" id="addError"></div>
+      <button class="btn-save" id="addBtn" onclick="addCustomer()">➕ Add Customer</button>
+    </div>
+
+    <!-- Customers List -->
+    <div class="card">
+      <div class="card-title">📋 Active Customers — This Month's Accounts</div>
+      <div id="customersList">
+        <p style="color:#888; font-size:13px; text-align:center; padding:15px;">Loading...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+      <h3>💰 Record Payment</h3>
+      <p id="modalCustomerName" style="color:#555; font-size:13px; margin-bottom:15px;"></p>
+      <div class="form-group">
+        <label>Amount (Rs)</label>
+        <input type="number" id="modalAmount" placeholder="Enter amount" min="0" />
+      </div>
+      <div class="form-group">
+        <label>Payment Type</label>
+        <select id="modalPaymentType" style="width:100%; padding:10px 12px; border:1.5px solid #ddd; border-radius:8px; font-size:14px; outline:none;">
+          <option value="partial">Partial Payment</option>
+          <option value="full">Full Payment</option>
+          <option value="cash">Cash</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <input type="text" id="modalNotes" placeholder="Any notes..." />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-modal-save" onclick="savePayment()">💾 Save Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    📞 0300-4455771 &nbsp;|&nbsp; ✉️ admin@subzi.pk &nbsp;|&nbsp; 🌐 <a href="https://subzi.pk">subzi.pk</a>
+  </div>
+
+  <script>
+    let currentCustomerId = null;
+    let currentMonth, currentYear;
+
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    window.addEventListener('load', async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+
+      const now = new Date();
+      currentMonth = now.getMonth() + 1;
+      currentYear = now.getFullYear();
+
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
+
+      loadCustomers();
+    });
+
+    async function addCustomer() {
+      const name = document.getElementById('cusName').value.trim();
+      const phone = document.getElementById('cusPhone').value.trim();
+      const address = document.getElementById('cusAddress').value.trim();
+      const milkRate = parseFloat(document.getElementById('cusMilkRate').value) || 280;
+      const yogurtRate = parseFloat(document.getElementById('cusYogurtRate').value) || 260;
+      const btn = document.getElementById('addBtn');
+      const successMsg = document.getElementById('addSuccess');
+      const errorMsg = document.getElementById('addError');
+
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      if (!name) { errorMsg.textContent = 'Please enter customer name.'; errorMsg.style.display = 'block'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const { error } = await supabase.from('customers').insert({
+        name, phone, address, milk_rate: milkRate, yogurt_rate: yogurtRate
+      });
+
+      if (error) {
+        errorMsg.textContent = 'Error: ' + error.message;
+        errorMsg.style.display = 'block';
+      } else {
+        successMsg.style.display = 'block';
+        document.getElementById('cusName').value = '';
+        document.getElementById('cusPhone').value = '';
+        document.getElementById('cusAddress').value = '';
+        document.getElementById('cusMilkRate').value = '280';
+        document.getElementById('cusYogurtRate').value = '260';
+        loadCustomers();
+      }
+
+      btn.disabled = false;
+      btn.textContent = '➕ Add Customer';
+    }
+
+    async function loadCustomers() {
+      const { data: customers } = await supabase
+        .from('customers')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+
+      const container = document.getElementById('customersList');
+
+      if (!customers || customers.length === 0) {
+        container.innerHTML = '<p style="color:#888; font-size:13px; text-align:center; padding:15px;">No customers added yet.</p>';
+        return;
+      }
+
+      let html = '';
+      for (const c of customers) {
+        // Current month account
+        const { data: account } = await supabase
+          .from('customer_monthly_accounts')
+          .select('*')
+          .eq('customer_id', c.id)
+          .eq('month', currentMonth)
+          .eq('year', currentYear)
+          .single();
+
+        const delivered = account?.total_delivered || 0;
+        const paid = account?.total_paid || 0;
+        const balance = delivered - paid;
+
+        // Previous months with balance
+        const { data: prevAccounts } = await supabase
+          .from('customer_monthly_accounts')
+          .select('*')
+          .eq('customer_id', c.id)
+          .neq('month', currentMonth)
+          .order('year', { ascending: false })
+          .order('month', { ascending: false })
+          .limit(3);
+
+        let prevHtml = '';
+        if (prevAccounts && prevAccounts.length > 0) {
+          prevAccounts.forEach(prev => {
+            const prevBal = prev.total_delivered - prev.total_paid;
+            if (prevBal > 0) {
+              prevHtml += `
+                <div class="prev-month-item">
+                  <span class="month-label">📅 ${monthNames[prev.month - 1]} ${prev.year}</span>
+                  <span class="month-balance">Rs ${prevBal.toLocaleString()} due</span>
+                </div>`;
+            }
+          });
+        }
+
+        html += `
+          <div class="customer-card">
+            <div class="customer-header">
+              <span class="customer-name">👤 ${c.name}</span>
+              <span class="customer-rate">🥛 Rs${c.milk_rate} | 🫙 Rs${c.yogurt_rate}</span>
+            </div>
+            <div class="customer-info">
+              📞 ${c.phone || 'No phone'} &nbsp;|&nbsp; 📍 ${c.address || 'No address'}
+            </div>
+            <div class="monthly-balance">
+              <div class="balance-row">
+                <span class="lbl">This Month Delivered</span>
+                <span class="val">Rs ${delivered.toLocaleString()}</span>
+              </div>
+              <div class="balance-row paid-val">
+                <span class="lbl">Paid</span>
+                <span class="val">Rs ${paid.toLocaleString()}</span>
+              </div>
+              <div class="balance-row due">
+                <span class="lbl">Balance Due</span>
+                <span class="val">Rs ${balance.toLocaleString()}</span>
+              </div>
+            </div>
+            ${prevHtml ? `<div class="prev-months"><div style="font-size:12px; color:#795548; font-weight:600; margin-bottom:5px;">⚠️ Previous Month Balances:</div>${prevHtml}</div>` : ''}
+            <div class="customer-actions">
+              <button class="btn-payment" onclick="openPaymentModal('${c.id}', '${c.name}')">💰 Record Payment</button>
+              <button class="btn-deactivate" onclick="deactivateCustomer('${c.id}')">✕ Remove</button>
+            </div>
+          </div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function openPaymentModal(customerId, customerName) {
+      currentCustomerId = customerId;
+      document.getElementById('modalCustomerName').textContent = 'Customer: ' + customerName;
+      document.getElementById('modalAmount').value = '';
+      document.getElementById('modalNotes').value = '';
+      document.getElementById('paymentModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('paymentModal').classList.remove('show');
+      currentCustomerId = null;
+    }
+
+    async function savePayment() {
+      const amount = parseFloat(document.getElementById('modalAmount').value) || 0;
+      const paymentType = document.getElementById('modalPaymentType').value;
+      const notes = document.getElementById('modalNotes').value;
+
+      if (amount === 0) { alert('Please enter payment amount.'); return; }
+
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session.user.id;
+
+      await supabase.from('customer_payments').insert({
+        customer_id: currentCustomerId,
+        payment_date: today,
+        month: currentMonth,
+        year: currentYear,
+        amount,
+        payment_type: paymentType,
+        notes,
+        created_by: userId
+      });
+
+      const { data: account } = await supabase
+        .from('customer_monthly_accounts')
+        .select('*')
+        .eq('customer_id', currentCustomerId)
+        .eq('month', currentMonth)
+        .eq('year', currentYear)
+        .single();
+
+      if (account) {
+        await supabase.from('customer_monthly_accounts')
+          .update({ total_paid: account.total_paid + amount })
+          .eq('id', account.id);
+      } else {
+        await supabase.from('customer_monthly_accounts').insert({
+          customer_id: currentCustomerId,
+          month: currentMonth,
+          year: currentYear,
+          total_delivered: 0,
+          total_paid: amount
+        });
+      }
+
+      closeModal();
+      loadCustomers();
+    }
+
+    async function deactivateCustomer(id) {
+      if (!confirm('Remove this customer from active list?')) return;
+      await supabase.from('customers').update({ is_active: false }).eq('id', id);
+      loadCustomers();
+    }
+  </script>
+
+</body>
+</html>
