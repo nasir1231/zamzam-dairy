@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expenses — ZamZam Dairy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
+    .header {
+      background: #1a5c2a;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title { text-align: center; flex: 1; }
+    .header-title h1 { font-size: 18px; font-weight: 700; }
+    .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+    .btn-back {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .date-bar {
+      background: #e8f5e9;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #1a5c2a;
+      font-weight: 600;
+      border-bottom: 1px solid #c8e6c9;
+    }
+    .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a5c2a;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f5e9;
+    }
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .category-btn {
+      padding: 12px 8px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s;
+      color: #555;
+    }
+    .category-btn:hover { border-color: #1a5c2a; color: #1a5c2a; }
+    .category-btn.active {
+      border-color: #1a5c2a;
+      background: #e8f5e9;
+      color: #1a5c2a;
+    }
+    .category-btn .icon { font-size: 20px; display: block; margin-bottom: 4px; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group { margin-bottom: 15px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .form-group input:focus { border-color: #1a5c2a; }
+    .btn-save {
+      width: 100%;
+      padding: 13px;
+      background: #1a5c2a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-save:hover { background: #144d22; }
+    .btn-save:disabled { background: #aaa; cursor: not-allowed; }
+    .success-msg {
+      background: #e8f5e9;
+      color: #1a5c2a;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .error-msg {
+      background: #ffe8e8;
+      color: #c0392b;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .history-table th {
+      background: #e8f5e9;
+      padding: 10px;
+      text-align: left;
+      color: #1a5c2a;
+      font-weight: 600;
+    }
+    .history-table td {
+      padding: 10px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+    .history-table tr:last-child td { border-bottom: none; }
+    .badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #e8f5e9;
+      color: #1a5c2a;
+    }
+    .today-total {
+      background: #ffe8e8;
+      border-radius: 8px;
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      color: #c0392b;
+      margin-top: 10px;
+    }
+    .monthly-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .monthly-item {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+    .monthly-item .cat { color: #555; font-weight: 600; }
+    .monthly-item .amt { color: #c0392b; font-weight: 700; }
+    .footer {
+      background: #1a5c2a;
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+      font-size: 12px;
+    }
+    .footer a { color: #a8d5b5; text-decoration: none; }
+    @media (max-width: 500px) {
+      .form-row { grid-template-columns: 1fr; }
+      .category-grid { grid-template-columns: repeat(2, 1fr); }
+      .monthly-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="dashboard.html" class="btn-back">← Back</a>
+    <div class="header-title">
+      <h1>💸 Expenses</h1>
+      <p>Daily & Monthly Costs</p>
+    </div>
+    <div style="width:70px"></div>
+  </div>
+
+  <div class="date-bar" id="dateBar">Loading...</div>
+
+  <div class="main">
+
+    <div class="card">
+      <div class="card-title">💸 Add New Expense</div>
+
+      <!-- Category Selection -->
+      <label style="display:block; font-size:13px; color:#555; margin-bottom:8px; font-weight:600;">Category</label>
+      <div class="category-grid">
+        <button class="category-btn active" id="cat-rent" onclick="setCategory('rent')">
+          <span class="icon">🏪</span>Rent
+        </button>
+        <button class="category-btn" id="cat-salary" onclick="setCategory('salary')">
+          <span class="icon">👷</span>Salary
+        </button>
+        <button class="category-btn" id="cat-fuel" onclick="setCategory('fuel')">
+          <span class="icon">⛽</span>Fuel
+        </button>
+        <button class="category-btn" id="cat-bike" onclick="setCategory('bike')">
+          <span class="icon">🏍️</span>Bike
+        </button>
+        <button class="category-btn" id="cat-bills" onclick="setCategory('bills')">
+          <span class="icon">📄</span>Bills
+        </button>
+        <button class="category-btn" id="cat-other" onclick="setCategory('other')">
+          <span class="icon">📦</span>Other
+        </button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Amount (Rs)</label>
+          <input type="number" id="amount" placeholder="0" min="0" step="1" />
+        </div>
+        <div class="form-group">
+          <label>Description (optional)</label>
+          <input type="text" id="description" placeholder="Details..." />
+        </div>
+      </div>
+
+      <div class="success-msg" id="successMsg">✅ Expense saved successfully!</div>
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button class="btn-save" id="saveBtn" onclick="saveExpense()">💾 Save Expense</button>
+    </div>
+
+    <!-- Today's Expenses -->
+    <div class="card">
+      <div class="card-title">📋 Today's Expenses</div>
+      <div id="todayContent">
+        <p style="color:#888; font-size:13px; text-align:center; padding:15px;">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Monthly Summary -->
+    <div class="card">
+      <div class="card-title">📊 This Month's Expenses by Category</div>
+      <div id="monthlyContent">
+        <p style="color:#888; font-size:13px; text-align:center; padding:15px;">Loading...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    📞 0300-4455771 &nbsp;|&nbsp; ✉️ admin@subzi.pk &nbsp;|&nbsp; 🌐 <a href="https://subzi.pk">subzi.pk</a>
+  </div>
+
+  <script>
+    let selectedCategory = 'rent';
+    const categoryIcons = {
+      rent: '🏪', salary: '👷', fuel: '⛽',
+      bike: '🏍️', bills: '📄', other: '📦'
+    };
+
+    window.addEventListener('load', async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
+
+      loadToday();
+      loadMonthly();
+    });
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+      document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('cat-' + cat).classList.add('active');
+    }
+
+    async function loadToday() {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+
+      const { data } = await supabase
+        .from('expenses')
+        .select('*')
+        .eq('expense_date', today)
+        .order('created_at', { ascending: false });
+
+      const container = document.getElementById('todayContent');
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p style="color:#888; font-size:13px; text-align:center; padding:15px;">No expenses recorded today.</p>';
+        return;
+      }
+
+      let total = 0;
+      let html = `<table class="history-table">
+        <thead><tr>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Amount</th>
+        </tr></thead><tbody>`;
+
+      data.forEach(row => {
+        total += row.amount || 0;
+        html += `<tr>
+          <td><span class="badge">${categoryIcons[row.category] || '📦'} ${row.category.charAt(0).toUpperCase() + row.category.slice(1)}</span></td>
+          <td>${row.description || '--'}</td>
+          <td>Rs ${(row.amount || 0).toLocaleString()}</td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>
+        <div class="today-total">
+          <span>Today's Total Expenses</span>
+          <span>Rs ${total.toLocaleString()}</span>
+        </div>`;
+
+      container.innerHTML = html;
+    }
+
+    async function loadMonthly() {
+      const now = new Date();
+      const month = now.getMonth() + 1;
+      const year = now.getFullYear();
+
+      const { data } = await supabase
+        .from('expenses')
+        .select('category, amount')
+        .eq('month', month)
+        .eq('year', year);
+
+      const container = document.getElementById('monthlyContent');
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p style="color:#888; font-size:13px; text-align:center; padding:15px;">No expenses this month yet.</p>';
+        return;
+      }
+
+      const totals = {};
+      let grandTotal = 0;
+      data.forEach(row => {
+        totals[row.category] = (totals[row.category] || 0) + row.amount;
+        grandTotal += row.amount;
+      });
+
+      let html = '<div class="monthly-grid">';
+      Object.entries(totals).forEach(([cat, amt]) => {
+        html += `<div class="monthly-item">
+          <span class="cat">${categoryIcons[cat] || '📦'} ${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+          <span class="amt">Rs ${amt.toLocaleString()}</span>
+        </div>`;
+      });
+      html += '</div>';
+      html += `<div class="today-total" style="margin-top:15px;">
+        <span>Total This Month</span>
+        <span>Rs ${grandTotal.toLocaleString()}</span>
+      </div>`;
+
+      container.innerHTML = html;
+    }
+
+    async function saveExpense() {
+      const btn = document.getElementById('saveBtn');
+      const successMsg = document.getElementById('successMsg');
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      const amount = parseFloat(document.getElementById('amount').value) || 0;
+      const description = document.getElementById('description').value;
+
+      if (amount === 0) {
+        errorMsg.textContent = 'Please enter an amount.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const month = now.getMonth() + 1;
+      const year = now.getFullYear();
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session.user.id;
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const { error } = await supabase.from('expenses').insert({
+        expense_date: today,
+        month, year,
+        category: selectedCategory,
+        description,
+        amount,
+        created_by: userId
+      });
+
+      if (error) {
+        errorMsg.textContent = 'Error: ' + error.message;
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '💾 Save Expense';
+        return;
+      }
+
+      successMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '💾 Save Expense';
+      document.getElementById('amount').value = '';
+      document.getElementById('description').value = '';
+      loadToday();
+      loadMonthly();
+    }
+  </script>
+
+</body>
+</html>
