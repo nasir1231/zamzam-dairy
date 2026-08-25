@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — ZamZam Dairy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    .header {
+      background: #1a5c2a;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title { text-align: center; flex: 1; }
+    .header-title h1 { font-size: 18px; font-weight: 700; }
+    .header-title .amp { font-size: 13px; opacity: 0.85; }
+    .header-title h2 { font-size: 14px; font-weight: 400; letter-spacing: 1px; }
+    .btn-logout {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.3); }
+
+    /* Date bar */
+    .date-bar {
+      background: #e8f5e9;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #1a5c2a;
+      font-weight: 600;
+      border-bottom: 1px solid #c8e6c9;
+    }
+
+    /* Main content */
+    .main { flex: 1; padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px 15px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      border-top: 4px solid #1a5c2a;
+    }
+    .stat-card .icon { font-size: 28px; margin-bottom: 8px; }
+    .stat-card .value { font-size: 22px; font-weight: 700; color: #1a5c2a; }
+    .stat-card .label { font-size: 12px; color: #888; margin-top: 4px; }
+
+    /* Modules Grid */
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a5c2a;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f5e9;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .module-btn {
+      background: white;
+      border: 2px solid #e8f5e9;
+      border-radius: 10px;
+      padding: 18px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: block;
+    }
+    .module-btn:hover {
+      border-color: #1a5c2a;
+      background: #f0f7f0;
+      transform: translateY(-2px);
+    }
+    .module-btn .icon { font-size: 28px; display: block; margin-bottom: 8px; }
+    .module-btn .name { font-size: 13px; font-weight: 600; color: #333; }
+    .module-btn .desc { font-size: 11px; color: #888; margin-top: 3px; }
+
+    /* Today summary */
+    .summary-box {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 20px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row .label { color: #555; }
+    .summary-row .value { font-weight: 600; color: #1a5c2a; }
+    .summary-row.profit .value { color: #1a5c2a; font-size: 16px; }
+    .summary-row.loss .value { color: #c0392b; font-size: 16px; }
+
+    /* Footer */
+    .footer {
+      background: #1a5c2a;
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+      font-size: 12px;
+    }
+    .footer a { color: #a8d5b5; text-decoration: none; }
+
+    .loading { text-align: center; color: #888; padding: 20px; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div style="width:80px"></div>
+    <div class="header-title">
+      <h1>ZamZam Fresh Dairy Products</h1>
+      <div class="amp">&</div>
+      <h2>subzi.pk</h2>
+    </div>
+    <button class="btn-logout" onclick="handleLogout()">Logout</button>
+  </div>
+
+  <!-- Date -->
+  <div class="date-bar" id="dateBar">Loading...</div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Today Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="icon">🥛</div>
+        <div class="value" id="milkStock">--</div>
+        <div class="label">Milk Stock (kg)</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon">🫙</div>
+        <div class="value" id="yogurtStock">--</div>
+        <div class="label">Yogurt Stock (kg)</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon">💰</div>
+        <div class="value" id="todaySales">--</div>
+        <div class="label">Today Sales (Rs)</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon">📉</div>
+        <div class="value" id="todayExpenses">--</div>
+        <div class="label">Today Expenses (Rs)</div>
+      </div>
+      <div class="stat-card">
+        <div class="icon">📈</div>
+        <div class="value" id="todayProfit">--</div>
+        <div class="label">Today Profit (Rs)</div>
+      </div>
+    </div>
+
+    <!-- Quick Entry Modules -->
+    <div class="section-title">📋 Daily Entry</div>
+    <div class="modules-grid">
+      <a href="morning.html" class="module-btn">
+        <span class="icon">🌅</span>
+        <span class="name">Morning</span>
+        <span class="desc">6am stock & supply</span>
+      </a>
+      <a href="afternoon.html" class="module-btn">
+        <span class="icon">☀️</span>
+        <span class="name">Afternoon</span>
+        <span class="desc">1pm stock & supply</span>
+      </a>
+      <a href="evening.html" class="module-btn">
+        <span class="icon">🌆</span>
+        <span class="name">Evening</span>
+        <span class="desc">6-7pm supply</span>
+      </a>
+      <a href="yogurt.html" class="module-btn">
+        <span class="icon">🫙</span>
+        <span class="name">Yogurt</span>
+        <span class="desc">Daily production</span>
+      </a>
+      <a href="walkin.html" class="module-btn">
+        <span class="icon">🛒</span>
+        <span class="name">Walk-in Sales</span>
+        <span class="desc">Shop customers</span>
+      </a>
+      <a href="delivery.html" class="module-btn">
+        <span class="icon">🛵</span>
+        <span class="name">Delivery</span>
+        <span class="desc">Credit customers</span>
+      </a>
+      <a href="expenses.html" class="module-btn">
+        <span class="icon">💸</span>
+        <span class="name">Expenses</span>
+        <span class="desc">Daily costs</span>
+      </a>
+    </div>
+
+    <!-- Management Modules -->
+    <div class="section-title">⚙️ Management</div>
+    <div class="modules-grid">
+      <a href="suppliers.html" class="module-btn">
+        <span class="icon">🚜</span>
+        <span
