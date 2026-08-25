@@ -175,4 +175,323 @@
       font-size: 11px;
       font-weight: 600;
     }
-    .badge-credit { background: #fef3e2;
+    .badge-credit { background: #fef3e2; color: #e67e22; }
+    .badge-cash { background: #e8f5e9; color: #1a5c2a; }
+    .today-total {
+      background: #e8f5e9;
+      border-radius: 8px;
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      color: #1a5c2a;
+      margin-top: 10px;
+    }
+    .footer {
+      background: #1a5c2a;
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+      font-size: 12px;
+    }
+    .footer a { color: #a8d5b5; text-decoration: none; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="dashboard.html" class="btn-back">← Back</a>
+    <div class="header-title">
+      <h1>🛵 Delivery Entry</h1>
+      <p>Credit & Cash Deliveries</p>
+    </div>
+    <div style="width:70px"></div>
+  </div>
+
+  <div class="date-bar" id="dateBar">Loading...</div>
+
+  <div class="main">
+
+    <div class="card">
+      <div class="card-title">🛵 New Delivery Entry</div>
+
+      <!-- Customer -->
+      <div class="form-group">
+        <label>Customer</label>
+        <select id="customerId" onchange="fillCustomerRate()">
+          <option value="">-- Select Customer --</option>
+        </select>
+      </div>
+
+      <!-- Payment Type -->
+      <div style="margin-bottom:15px;">
+        <label style="display:block; font-size:13px; color:#555; margin-bottom:8px; font-weight:600;">Payment Type</label>
+        <div class="payment-toggle">
+          <button class="payment-btn active-credit" id="btnCredit" onclick="setPayment('credit')">📋 Credit (Udhaar)</button>
+          <button class="payment-btn" id="btnCash" onclick="setPayment('cash')">💵 Cash</button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Milk Quantity (kg)</label>
+          <input type="number" id="milkKg" placeholder="0.00" step="0.01" min="0" oninput="updateTotal()" />
+        </div>
+        <div class="form-group">
+          <label>Milk Rate (Rs/kg)</label>
+          <input type="number" id="milkRate" value="280" step="0.01" min="0" oninput="updateTotal()" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Yogurt Quantity (kg)</label>
+          <input type="number" id="yogurtKg" placeholder="0.00" step="0.01" min="0" oninput="updateTotal()" />
+        </div>
+        <div class="form-group">
+          <label>Yogurt Rate (Rs/kg)</label>
+          <input type="number" id="yogurtRate" value="260" step="0.01" min="0" oninput="updateTotal()" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Milk Subtotal</label>
+          <input type="text" id="milkSubtotal" value="Rs 0" readonly />
+        </div>
+        <div class="form-group">
+          <label>Yogurt Subtotal</label>
+          <input type="text" id="yogurtSubtotal" value="Rs 0" readonly />
+        </div>
+      </div>
+
+      <div class="total-display">
+        <span class="label">💰 Total Amount</span>
+        <span class="amount" id="totalAmount">Rs 0</span>
+      </div>
+
+      <div class="success-msg" id="successMsg">✅ Delivery recorded successfully!</div>
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button class="btn-save" id="saveBtn" onclick="saveDelivery()">💾 Save Delivery</button>
+    </div>
+
+    <!-- Today's Deliveries -->
+    <div class="card">
+      <div class="card-title">📋 Today's Deliveries</div>
+      <div id="historyContent">
+        <p style="color:#888; font-size:13px; text-align:center; padding:15px;">Loading...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    📞 0300-4455771 &nbsp;|&nbsp; ✉️ admin@subzi.pk &nbsp;|&nbsp; 🌐 <a href="https://subzi.pk">subzi.pk</a>
+  </div>
+
+  <script>
+    let paymentType = 'credit';
+    let customers = [];
+
+    window.addEventListener('load', async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
+
+      const { data } = await supabase.from('customers').select('*').eq('is_active', true).order('name');
+      customers = data || [];
+
+      const select = document.getElementById('customerId');
+      customers.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        opt.dataset.milkRate = c.milk_rate;
+        opt.dataset.yogurtRate = c.yogurt_rate;
+        select.appendChild(opt);
+      });
+
+      loadHistory();
+    });
+
+    function fillCustomerRate() {
+      const select = document.getElementById('customerId');
+      const selected = select.options[select.selectedIndex];
+      if (selected.dataset.milkRate) {
+        document.getElementById('milkRate').value = selected.dataset.milkRate;
+        document.getElementById('yogurtRate').value = selected.dataset.yogurtRate;
+        updateTotal();
+      }
+    }
+
+    function setPayment(type) {
+      paymentType = type;
+      document.getElementById('btnCredit').className = 'payment-btn' + (type === 'credit' ? ' active-credit' : '');
+      document.getElementById('btnCash').className = 'payment-btn' + (type === 'cash' ? ' active-cash' : '');
+    }
+
+    function updateTotal() {
+      const milkKg = parseFloat(document.getElementById('milkKg').value) || 0;
+      const milkRate = parseFloat(document.getElementById('milkRate').value) || 0;
+      const yogurtKg = parseFloat(document.getElementById('yogurtKg').value) || 0;
+      const yogurtRate = parseFloat(document.getElementById('yogurtRate').value) || 0;
+
+      const milkSubtotal = milkKg * milkRate;
+      const yogurtSubtotal = yogurtKg * yogurtRate;
+      const total = milkSubtotal + yogurtSubtotal;
+
+      document.getElementById('milkSubtotal').value = 'Rs ' + milkSubtotal.toLocaleString();
+      document.getElementById('yogurtSubtotal').value = 'Rs ' + yogurtSubtotal.toLocaleString();
+      document.getElementById('totalAmount').textContent = 'Rs ' + total.toLocaleString();
+    }
+
+    async function loadHistory() {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+
+      const { data } = await supabase
+        .from('deliveries')
+        .select('*, customers(name)')
+        .eq('delivery_date', today)
+        .order('created_at', { ascending: false });
+
+      const container = document.getElementById('historyContent');
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p style="color:#888; font-size:13px; text-align:center; padding:15px;">No deliveries today yet.</p>';
+        return;
+      }
+
+      let totalDay = 0;
+      let html = `<table class="history-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Milk</th>
+            <th>Yogurt</th>
+            <th>Amount</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+      data.forEach(row => {
+        totalDay += row.total_amount || 0;
+        html += `<tr>
+          <td>${row.customers?.name || '--'}</td>
+          <td>${row.milk_kg > 0 ? row.milk_kg + 'kg' : '--'}</td>
+          <td>${row.yogurt_kg > 0 ? row.yogurt_kg + 'kg' : '--'}</td>
+          <td>Rs ${(row.total_amount || 0).toLocaleString()}</td>
+          <td><span class="badge badge-${row.payment_type}">${row.payment_type === 'credit' ? '📋 Credit' : '💵 Cash'}</span></td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>
+        <div class="today-total">
+          <span>Today's Total Deliveries</span>
+          <span>Rs ${totalDay.toLocaleString()}</span>
+        </div>`;
+
+      container.innerHTML = html;
+    }
+
+    async function saveDelivery() {
+      const btn = document.getElementById('saveBtn');
+      const successMsg = document.getElementById('successMsg');
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      const customerId = document.getElementById('customerId').value;
+      const milkKg = parseFloat(document.getElementById('milkKg').value) || 0;
+      const milkRate = parseFloat(document.getElementById('milkRate').value) || 280;
+      const yogurtKg = parseFloat(document.getElementById('yogurtKg').value) || 0;
+      const yogurtRate = parseFloat(document.getElementById('yogurtRate').value) || 260;
+
+      if (!customerId) {
+        errorMsg.textContent = 'Please select a customer.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      if (milkKg === 0 && yogurtKg === 0) {
+        errorMsg.textContent = 'Please enter milk or yogurt quantity.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      const total = (milkKg * milkRate) + (yogurtKg * yogurtRate);
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const month = now.getMonth() + 1;
+      const year = now.getFullYear();
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session.user.id;
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const { error } = await supabase.from('deliveries').insert({
+        delivery_date: today,
+        month, year,
+        customer_id: customerId,
+        milk_kg: milkKg,
+        milk_rate: milkRate,
+        yogurt_kg: yogurtKg,
+        yogurt_rate: yogurtRate,
+        payment_type: paymentType,
+        created_by: userId
+      });
+
+      if (error) {
+        errorMsg.textContent = 'Error: ' + error.message;
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '💾 Save Delivery';
+        return;
+      }
+
+      // Update customer monthly account
+      const { data: existing } = await supabase
+        .from('customer_monthly_accounts')
+        .select('*')
+        .eq('customer_id', customerId)
+        .eq('month', month)
+        .eq('year', year)
+        .single();
+
+      if (existing) {
+        await supabase.from('customer_monthly_accounts')
+          .update({ total_delivered: existing.total_delivered + total })
+          .eq('id', existing.id);
+      } else {
+        await supabase.from('customer_monthly_accounts').insert({
+          customer_id: customerId,
+          month, year,
+          total_delivered: total,
+          total_paid: 0
+        });
+      }
+
+      successMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '💾 Save Delivery';
+
+      document.getElementById('customerId').value = '';
+      document.getElementById('milkKg').value = '';
+      document.getElementById('yogurtKg').value = '';
+      document.getElementById('milkRate').value = '280';
+      document.getElementById('yogurtRate').value = '260';
+      updateTotal();
+      loadHistory();
+    }
+  </script>
+
+</body>
+</html>
