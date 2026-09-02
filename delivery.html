@@ -9,191 +9,42 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
-    .header {
-      background: #1a5c2a;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .header { background: #1a5c2a; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
     .header-title { text-align: center; flex: 1; }
     .header-title h1 { font-size: 18px; font-weight: 700; }
     .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-    .btn-back {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 7px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      text-decoration: none;
-    }
-    .date-bar {
-      background: #e8f5e9;
-      padding: 10px 20px;
-      text-align: center;
-      font-size: 14px;
-      color: #1a5c2a;
-      font-weight: 600;
-      border-bottom: 1px solid #c8e6c9;
-    }
+    .btn-back { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; text-decoration: none; }
+    .date-bar { background: #e8f5e9; padding: 10px 20px; text-align: center; font-size: 14px; color: #1a5c2a; font-weight: 600; border-bottom: 1px solid #c8e6c9; }
     .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      margin-bottom: 20px;
-    }
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a5c2a;
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e8f5e9;
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
+    .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #1a5c2a; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e8f5e9; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
     .form-group { margin-bottom: 15px; }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: border 0.2s;
-    }
+    .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 600; }
+    .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s; }
     .form-group input:focus, .form-group select:focus { border-color: #1a5c2a; }
     .form-group input[readonly] { background: #f5f5f5; }
-    .payment-toggle {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    .payment-btn {
-      padding: 10px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      background: white;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      text-align: center;
-      transition: all 0.2s;
-    }
-    .payment-btn.active-credit {
-      border-color: #e67e22;
-      background: #fef9f0;
-      color: #e67e22;
-    }
-    .payment-btn.active-cash {
-      border-color: #1a5c2a;
-      background: #e8f5e9;
-      color: #1a5c2a;
-    }
-    .total-display {
-      background: #1a5c2a;
-      border-radius: 8px;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      color: white;
-    }
+    .payment-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .payment-btn { padding: 10px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; font-weight: 600; text-align: center; transition: all 0.2s; }
+    .payment-btn.active-credit { border-color: #e67e22; background: #fef9f0; color: #e67e22; }
+    .payment-btn.active-cash { border-color: #1a5c2a; background: #e8f5e9; color: #1a5c2a; }
+    .total-display { background: #1a5c2a; border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white; }
     .total-display .label { font-size: 14px; opacity: 0.9; }
     .total-display .amount { font-size: 24px; font-weight: 700; }
-    .btn-save {
-      width: 100%;
-      padding: 13px;
-      background: #1a5c2a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .btn-save { width: 100%; padding: 13px; background: #1a5c2a; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
     .btn-save:hover { background: #144d22; }
     .btn-save:disabled { background: #aaa; cursor: not-allowed; }
-    .success-msg {
-      background: #e8f5e9;
-      color: #1a5c2a;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 600;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .error-msg {
-      background: #ffe8e8;
-      color: #c0392b;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .history-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .history-table th {
-      background: #e8f5e9;
-      padding: 10px;
-      text-align: left;
-      color: #1a5c2a;
-      font-weight: 600;
-    }
-    .history-table td {
-      padding: 10px;
-      border-bottom: 1px solid #f0f0f0;
-      color: #333;
-    }
+    .success-msg { background: #e8f5e9; color: #1a5c2a; padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; margin-bottom: 15px; display: none; }
+    .error-msg { background: #ffe8e8; color: #c0392b; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; display: none; }
+    .history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .history-table th { background: #e8f5e9; padding: 10px; text-align: left; color: #1a5c2a; font-weight: 600; }
+    .history-table td { padding: 10px; border-bottom: 1px solid #f0f0f0; color: #333; }
     .history-table tr:last-child td { border-bottom: none; }
-    .badge {
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-    }
+    .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
     .badge-credit { background: #fef3e2; color: #e67e22; }
     .badge-cash { background: #e8f5e9; color: #1a5c2a; }
-    .today-total {
-      background: #e8f5e9;
-      border-radius: 8px;
-      padding: 12px 15px;
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
-      color: #1a5c2a;
-      margin-top: 10px;
-    }
-    .footer {
-      background: #1a5c2a;
-      color: white;
-      text-align: center;
-      padding: 12px 20px;
-      font-size: 12px;
-    }
+    .today-total { background: #e8f5e9; border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; font-weight: 700; color: #1a5c2a; margin-top: 10px; }
+    .footer { background: #1a5c2a; color: white; text-align: center; padding: 12px 20px; font-size: 12px; }
     .footer a { color: #a8d5b5; text-decoration: none; }
     @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
   </style>
@@ -204,7 +55,7 @@
     <a href="dashboard.html" class="btn-back">← Back</a>
     <div class="header-title">
       <h1>🛵 Delivery Entry</h1>
-      <p>Credit & Cash Deliveries</p>
+      <p>Credit &amp; Cash Deliveries</p>
     </div>
     <div style="width:70px"></div>
   </div>
@@ -216,7 +67,6 @@
     <div class="card">
       <div class="card-title">🛵 New Delivery Entry</div>
 
-      <!-- Customer -->
       <div class="form-group">
         <label>Customer</label>
         <select id="customerId" onchange="fillCustomerRate()">
@@ -224,7 +74,6 @@
         </select>
       </div>
 
-      <!-- Payment Type -->
       <div style="margin-bottom:15px;">
         <label style="display:block; font-size:13px; color:#555; margin-bottom:8px; font-weight:600;">Payment Type</label>
         <div class="payment-toggle">
@@ -277,7 +126,6 @@
       <button class="btn-save" id="saveBtn" onclick="saveDelivery()">💾 Save Delivery</button>
     </div>
 
-    <!-- Today's Deliveries -->
     <div class="card">
       <div class="card-title">📋 Today's Deliveries</div>
       <div id="historyContent">
@@ -296,14 +144,14 @@
     let customers = [];
 
     window.addEventListener('load', async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) { window.location.href = 'index.html'; return; }
 
       const now = new Date();
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
 
-      const { data } = await supabase.from('customers').select('*').eq('is_active', true).order('name');
+      const { data } = await supabaseClient.from('customers').select('*').eq('is_active', true).order('name');
       customers = data || [];
 
       const select = document.getElementById('customerId');
@@ -354,7 +202,7 @@
       const now = new Date();
       const today = now.toISOString().split('T')[0];
 
-      const { data } = await supabase
+      const { data } = await supabaseClient
         .from('deliveries')
         .select('*, customers(name)')
         .eq('delivery_date', today)
@@ -431,13 +279,13 @@
       const month = now.getMonth() + 1;
       const year = now.getFullYear();
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       const userId = session.user.id;
 
       btn.disabled = true;
       btn.textContent = 'Saving...';
 
-      const { error } = await supabase.from('deliveries').insert({
+      const { error } = await supabaseClient.from('deliveries').insert({
         delivery_date: today,
         month, year,
         customer_id: customerId,
@@ -457,8 +305,7 @@
         return;
       }
 
-      // Update customer monthly account
-      const { data: existing } = await supabase
+      const { data: existing } = await supabaseClient
         .from('customer_monthly_accounts')
         .select('*')
         .eq('customer_id', customerId)
@@ -467,11 +314,11 @@
         .single();
 
       if (existing) {
-        await supabase.from('customer_monthly_accounts')
+        await supabaseClient.from('customer_monthly_accounts')
           .update({ total_delivered: existing.total_delivered + total })
           .eq('id', existing.id);
       } else {
-        await supabase.from('customer_monthly_accounts').insert({
+        await supabaseClient.from('customer_monthly_accounts').insert({
           customer_id: customerId,
           month, year,
           total_delivered: total,

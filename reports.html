@@ -10,139 +10,30 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
-    .header {
-      background: #1a5c2a;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .header { background: #1a5c2a; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
     .header-title { text-align: center; flex: 1; }
     .header-title h1 { font-size: 18px; font-weight: 700; }
     .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-    .btn-back {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 7px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      text-decoration: none;
-    }
-    .date-bar {
-      background: #e8f5e9;
-      padding: 10px 20px;
-      text-align: center;
-      font-size: 14px;
-      color: #1a5c2a;
-      font-weight: 600;
-      border-bottom: 1px solid #c8e6c9;
-    }
+    .btn-back { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; text-decoration: none; }
+    .date-bar { background: #e8f5e9; padding: 10px 20px; text-align: center; font-size: 14px; color: #1a5c2a; font-weight: 600; border-bottom: 1px solid #c8e6c9; }
     .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      margin-bottom: 20px;
-    }
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a5c2a;
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e8f5e9;
-    }
+    .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #1a5c2a; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e8f5e9; }
     .form-group { margin-bottom: 15px; }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: border 0.2s;
-    }
+    .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 600; }
+    .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s; }
     .form-group input:focus, .form-group select:focus { border-color: #1a5c2a; }
-    .btn-report {
-      width: 100%;
-      padding: 13px;
-      background: #1a5c2a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
+    .btn-report { width: 100%; padding: 13px; background: #1a5c2a; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
     .btn-report:hover { background: #144d22; }
     .btn-report:disabled { background: #aaa; cursor: not-allowed; }
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 14px;
-    }
-    .summary-row:last-child { border-bottom: none; }
-    .summary-row .lbl { color: #555; }
-    .summary-row .val { font-weight: 600; color: #1a5c2a; }
-    .summary-row.expense .val { color: #c0392b; }
-    .summary-row.profit .val { color: #1a5c2a; font-size: 16px; }
-    .summary-row.loss .val { color: #c0392b; font-size: 16px; }
-    .customer-bill-item {
-      border: 1px solid #e8f5e9;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .customer-bill-item { border: 1px solid #e8f5e9; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     .customer-bill-item .cname { font-weight: 600; color: #1a5c2a; font-size: 14px; }
     .customer-bill-item .cbalance { color: #c0392b; font-weight: 700; font-size: 14px; }
-    .btn-bill {
-      padding: 6px 12px;
-      background: #1a5c2a;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .btn-bill { padding: 6px 12px; background: #1a5c2a; color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
     .btn-bill:hover { background: #144d22; }
-    .btn-all-bills {
-      width: 100%;
-      padding: 12px;
-      background: #e8f5e9;
-      color: #1a5c2a;
-      border: 2px solid #1a5c2a;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+    .btn-all-bills { width: 100%; padding: 12px; background: #e8f5e9; color: #1a5c2a; border: 2px solid #1a5c2a; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
     .btn-all-bills:hover { background: #d0ebd0; }
-    .footer {
-      background: #1a5c2a;
-      color: white;
-      text-align: center;
-      padding: 12px 20px;
-      font-size: 12px;
-    }
+    .footer { background: #1a5c2a; color: white; text-align: center; padding: 12px 20px; font-size: 12px; }
     .footer a { color: #a8d5b5; text-decoration: none; }
   </style>
 </head>
@@ -152,7 +43,7 @@
     <a href="dashboard.html" class="btn-back">← Back</a>
     <div class="header-title">
       <h1>📊 Reports</h1>
-      <p>Daily & Monthly PDF Reports</p>
+      <p>Daily &amp; Monthly PDF Reports</p>
     </div>
     <div style="width:70px"></div>
   </div>
@@ -161,7 +52,6 @@
 
   <div class="main">
 
-    <!-- Daily Report -->
     <div class="card">
       <div class="card-title">📅 Daily Report</div>
       <div class="form-group">
@@ -169,14 +59,13 @@
         <input type="date" id="reportDate" />
       </div>
       <div id="dailySummary" style="margin-bottom:15px;"></div>
-      <button class="btn-report" onclick="generateDailyReport()">📄 Generate & Download Daily PDF</button>
+      <button class="btn-report" onclick="generateDailyReport()">📄 Generate &amp; Download Daily PDF</button>
     </div>
 
-    <!-- Monthly Customer Bills -->
     <div class="card">
       <div class="card-title">🧾 Monthly Customer Bills</div>
       <div class="form-group">
-        <label>Select Month & Year</label>
+        <label>Select Month &amp; Year</label>
         <input type="month" id="billMonth" />
       </div>
       <button class="btn-report" onclick="loadCustomerBills()">🔍 Load Customer Bills</button>
@@ -194,19 +83,17 @@
     const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
     window.addEventListener('load', async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) { window.location.href = 'index.html'; return; }
 
       const now = new Date();
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
 
-      // Set defaults
       document.getElementById('reportDate').value = now.toISOString().split('T')[0];
       document.getElementById('billMonth').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
     });
 
-    // ─── DAILY REPORT ───────────────────────────────────────
     async function generateDailyReport() {
       const date = document.getElementById('reportDate').value;
       if (!date) { alert('Please select a date.'); return; }
@@ -215,14 +102,13 @@
       const month = d.getMonth() + 1;
       const year = d.getFullYear();
 
-      // Fetch all data
       const [walkin, delivery, expenses, sessions, yogurt, purchases] = await Promise.all([
-        supabase.from('walkin_sales').select('*').eq('sale_date', date),
-        supabase.from('deliveries').select('*, customers(name)').eq('delivery_date', date),
-        supabase.from('expenses').select('*').eq('expense_date', date),
-        supabase.from('stock_sessions').select('*').eq('session_date', date).order('created_at'),
-        supabase.from('yogurt_production').select('*').eq('production_date', date),
-        supabase.from('purchases').select('*, suppliers(name)').eq('purchase_date', date)
+        supabaseClient.from('walkin_sales').select('*').eq('sale_date', date),
+        supabaseClient.from('deliveries').select('*, customers(name)').eq('delivery_date', date),
+        supabaseClient.from('expenses').select('*').eq('expense_date', date),
+        supabaseClient.from('stock_sessions').select('*').eq('session_date', date).order('created_at'),
+        supabaseClient.from('yogurt_production').select('*').eq('production_date', date),
+        supabaseClient.from('purchases').select('*, suppliers(name)').eq('purchase_date', date)
       ]);
 
       const walkinTotal = walkin.data?.reduce((s, r) => s + (r.total_amount || 0), 0) || 0;
@@ -237,15 +123,12 @@
       const milkUsedYogurt = yogurt.data?.reduce((s, r) => s + (r.milk_used_kg || 0), 0) || 0;
       const yogurtProduced = yogurt.data?.reduce((s, r) => s + (r.yogurt_produced_kg || 0), 0) || 0;
 
-      // Generate PDF
       const doc = new jsPDF();
       const pageW = doc.internal.pageSize.getWidth();
 
-      // Header background
       doc.setFillColor(26, 92, 42);
       doc.rect(0, 0, pageW, 45, 'F');
 
-      // Header text
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
@@ -258,7 +141,6 @@
       doc.setFontSize(10);
       doc.text('Daily Report', pageW / 2, 40, { align: 'center' });
 
-      // Date
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
@@ -266,7 +148,6 @@
 
       let y = 65;
 
-      // Section helper
       const section = (title) => {
         doc.setFillColor(232, 245, 233);
         doc.rect(14, y - 5, pageW - 28, 8, 'F');
@@ -289,7 +170,6 @@
         y += 10;
       };
 
-      // Stock
       section('STOCK SUMMARY');
       if (sessions.data && sessions.data.length > 0) {
         const morning = sessions.data.find(s => s.session_type === 'morning');
@@ -301,7 +181,6 @@
       row('Yogurt Produced', yogurtProduced.toFixed(2) + ' kg');
       y += 3;
 
-      // Sales
       section('SALES');
       row('Walk-in Milk', walkinMilk.toFixed(2) + ' kg');
       row('Walk-in Yogurt', walkinYogurt.toFixed(2) + ' kg');
@@ -311,7 +190,6 @@
       row('TOTAL SALES', 'Rs ' + totalSales.toLocaleString(), true);
       y += 3;
 
-      // Expenses
       section('EXPENSES');
       if (expenses.data && expenses.data.length > 0) {
         expenses.data.forEach(e => {
@@ -325,7 +203,6 @@
       row('TOTAL EXPENSES', 'Rs ' + expensesTotal.toLocaleString(), true);
       y += 5;
 
-      // Profit
       doc.setFillColor(profit >= 0 ? 26 : 192, profit >= 0 ? 92 : 57, profit >= 0 ? 42 : 43);
       doc.rect(14, y - 5, pageW - 28, 12, 'F');
       doc.setTextColor(255, 255, 255);
@@ -335,7 +212,6 @@
       doc.text('Rs ' + Math.abs(profit).toLocaleString(), pageW - 14, y + 3, { align: 'right' });
       y += 20;
 
-      // Footer
       const pageH = doc.internal.pageSize.getHeight();
       doc.setFillColor(26, 92, 42);
       doc.rect(0, pageH - 20, pageW, 20, 'F');
@@ -347,7 +223,6 @@
       doc.save('ZamZam-Daily-Report-' + date + '.pdf');
     }
 
-    // ─── CUSTOMER BILLS ──────────────────────────────────────
     async function loadCustomerBills() {
       const monthVal = document.getElementById('billMonth').value;
       if (!monthVal) { alert('Please select a month.'); return; }
@@ -356,7 +231,7 @@
       const container = document.getElementById('customerBillsList');
       container.innerHTML = '<p style="color:#888; font-size:13px; text-align:center; padding:15px;">Loading...</p>';
 
-      const { data: customers } = await supabase
+      const { data: customers } = await supabaseClient
         .from('customers')
         .select('*')
         .eq('is_active', true)
@@ -369,7 +244,7 @@
 
       let html = '';
       for (const c of customers) {
-        const { data: account } = await supabase
+        const { data: account } = await supabaseClient
           .from('customer_monthly_accounts')
           .select('*')
           .eq('customer_id', c.id)
@@ -401,15 +276,14 @@
     }
 
     async function generateCustomerBill(customerId, name, address, milkRate, yogurtRate, month, year) {
-      // Get deliveries
-      const { data: deliveries } = await supabase
+      const { data: deliveries } = await supabaseClient
         .from('deliveries')
         .select('*')
         .eq('customer_id', customerId)
         .eq('month', month)
         .eq('year', year);
 
-      const { data: account } = await supabase
+      const { data: account } = await supabaseClient
         .from('customer_monthly_accounts')
         .select('*')
         .eq('customer_id', customerId)
@@ -417,8 +291,7 @@
         .eq('year', year)
         .single();
 
-      // Get previous month balances
-      const { data: prevAccounts } = await supabase
+      const { data: prevAccounts } = await supabaseClient
         .from('customer_monthly_accounts')
         .select('*')
         .eq('customer_id', customerId)
@@ -439,7 +312,6 @@
       const pageW = doc.internal.pageSize.getWidth();
       const pageH = doc.internal.pageSize.getHeight();
 
-      // Header
       doc.setFillColor(26, 92, 42);
       doc.rect(0, 0, pageW, 45, 'F');
       doc.setTextColor(255, 255, 255);
@@ -454,7 +326,6 @@
       doc.setFontSize(10);
       doc.text('Customer Bill — ' + monthNames[month - 1] + ' ' + year, pageW / 2, 40, { align: 'center' });
 
-      // Customer info
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
@@ -464,14 +335,12 @@
       doc.text('Name:    ' + name, 14, 67);
       doc.text('Address: ' + (address || 'N/A'), 14, 75);
 
-      // Divider
       doc.setDrawColor(26, 92, 42);
       doc.setLineWidth(0.5);
       doc.line(14, 80, pageW - 14, 80);
 
       let y = 92;
 
-      // Bill table header
       doc.setFillColor(232, 245, 233);
       doc.rect(14, y - 6, pageW - 28, 9, 'F');
       doc.setTextColor(26, 92, 42);
@@ -508,7 +377,6 @@
 
       y += 3;
 
-      // Totals
       const totalRow = (label, value, highlight = false) => {
         if (highlight) {
           doc.setFillColor(232, 245, 233);
@@ -530,7 +398,6 @@
       totalRow('Balance Due', 'Rs ' + balance.toLocaleString(), true);
       y += 5;
 
-      // Previous balances
       if (prevAccounts && prevAccounts.length > 0) {
         const prevDue = prevAccounts.filter(p => (p.total_delivered - p.total_paid) > 0);
         if (prevDue.length > 0) {
@@ -553,14 +420,12 @@
         }
       }
 
-      // Thank you
       y += 10;
       doc.setTextColor(26, 92, 42);
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(11);
       doc.text('Thank you for your business!', pageW / 2, y, { align: 'center' });
 
-      // Footer
       doc.setFillColor(26, 92, 42);
       doc.rect(0, pageH - 20, pageW, 20, 'F');
       doc.setTextColor(255, 255, 255);
@@ -572,7 +437,7 @@
     }
 
     async function generateAllBills(month, year) {
-      const { data: customers } = await supabase
+      const { data: customers } = await supabaseClient
         .from('customers')
         .select('*')
         .eq('is_active', true)

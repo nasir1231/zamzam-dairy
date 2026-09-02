@@ -9,233 +9,53 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
-    .header {
-      background: #1a5c2a;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .header { background: #1a5c2a; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
     .header-title { text-align: center; flex: 1; }
     .header-title h1 { font-size: 18px; font-weight: 700; }
     .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-    .btn-back {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 7px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      text-decoration: none;
-    }
-    .date-bar {
-      background: #e8f5e9;
-      padding: 10px 20px;
-      text-align: center;
-      font-size: 14px;
-      color: #1a5c2a;
-      font-weight: 600;
-      border-bottom: 1px solid #c8e6c9;
-    }
+    .btn-back { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; text-decoration: none; }
+    .date-bar { background: #e8f5e9; padding: 10px 20px; text-align: center; font-size: 14px; color: #1a5c2a; font-weight: 600; border-bottom: 1px solid #c8e6c9; }
     .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      margin-bottom: 20px;
-    }
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a5c2a;
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e8f5e9;
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
+    .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #1a5c2a; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e8f5e9; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
     .form-group { margin-bottom: 15px; }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: border 0.2s;
-    }
+    .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 600; }
+    .form-group input { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s; }
     .form-group input:focus { border-color: #1a5c2a; }
-    .btn-save {
-      width: 100%;
-      padding: 13px;
-      background: #1a5c2a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .btn-save { width: 100%; padding: 13px; background: #1a5c2a; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
     .btn-save:hover { background: #144d22; }
     .btn-save:disabled { background: #aaa; cursor: not-allowed; }
-    .success-msg {
-      background: #e8f5e9;
-      color: #1a5c2a;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 600;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .error-msg {
-      background: #ffe8e8;
-      color: #c0392b;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .customer-card {
-      border: 1px solid #e8f5e9;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 12px;
-      background: #fafffe;
-    }
-    .customer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
+    .success-msg { background: #e8f5e9; color: #1a5c2a; padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; margin-bottom: 15px; display: none; }
+    .error-msg { background: #ffe8e8; color: #c0392b; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; display: none; }
+    .customer-card { border: 1px solid #e8f5e9; border-radius: 10px; padding: 15px; margin-bottom: 12px; background: #fafffe; }
+    .customer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .customer-name { font-size: 16px; font-weight: 700; color: #1a5c2a; }
-    .customer-rate {
-      background: #e8f5e9;
-      color: #1a5c2a;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-    }
+    .customer-rate { background: #e8f5e9; color: #1a5c2a; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
     .customer-info { font-size: 13px; color: #777; margin-bottom: 10px; }
-    .monthly-balance {
-      background: #f9f9f9;
-      border-radius: 6px;
-      padding: 10px;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-    .balance-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 3px 0;
-    }
+    .monthly-balance { background: #f9f9f9; border-radius: 6px; padding: 10px; font-size: 13px; margin-bottom: 10px; }
+    .balance-row { display: flex; justify-content: space-between; padding: 3px 0; }
     .balance-row .lbl { color: #777; }
     .balance-row .val { font-weight: 600; color: #333; }
     .balance-row.due .val { color: #c0392b; }
     .balance-row.paid-val .val { color: #1a5c2a; }
     .prev-months { margin-top: 8px; }
-    .prev-month-item {
-      background: #fff8e1;
-      border: 1px solid #ffe082;
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 12px;
-      margin-bottom: 5px;
-      display: flex;
-      justify-content: space-between;
-    }
+    .prev-month-item { background: #fff8e1; border: 1px solid #ffe082; border-radius: 6px; padding: 8px 10px; font-size: 12px; margin-bottom: 5px; display: flex; justify-content: space-between; }
     .prev-month-item .month-label { color: #795548; font-weight: 600; }
     .prev-month-item .month-balance { color: #c0392b; font-weight: 700; }
     .customer-actions { display: flex; gap: 8px; }
-    .btn-payment {
-      flex: 1;
-      padding: 8px;
-      background: #1a5c2a;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .btn-payment { flex: 1; padding: 8px; background: #1a5c2a; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
     .btn-payment:hover { background: #144d22; }
-    .btn-deactivate {
-      padding: 8px 14px;
-      background: #ffe8e8;
-      color: #c0392b;
-      border: 1px solid #ffcdd2;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
+    .btn-deactivate { padding: 8px 14px; background: #ffe8e8; color: #c0392b; border: 1px solid #ffcdd2; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.show { display: flex; }
-    .modal {
-      background: white;
-      border-radius: 12px;
-      padding: 25px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    }
+    .modal { background: white; border-radius: 12px; padding: 25px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
     .modal h3 { color: #1a5c2a; margin-bottom: 15px; font-size: 16px; }
     .modal .form-group { margin-bottom: 12px; }
     .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
-    .btn-modal-save {
-      flex: 1;
-      padding: 10px;
-      background: #1a5c2a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-modal-cancel {
-      flex: 1;
-      padding: 10px;
-      background: #f5f5f5;
-      color: #555;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .footer {
-      background: #1a5c2a;
-      color: white;
-      text-align: center;
-      padding: 12px 20px;
-      font-size: 12px;
-    }
+    .btn-modal-save { flex: 1; padding: 10px; background: #1a5c2a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-modal-cancel { flex: 1; padding: 10px; background: #f5f5f5; color: #555; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; }
+    .footer { background: #1a5c2a; color: white; text-align: center; padding: 12px 20px; font-size: 12px; }
     .footer a { color: #a8d5b5; text-decoration: none; }
     @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
   </style>
@@ -246,7 +66,7 @@
     <a href="dashboard.html" class="btn-back">← Back</a>
     <div class="header-title">
       <h1>👥 Customers</h1>
-      <p>Credit Accounts & Payments</p>
+      <p>Credit Accounts &amp; Payments</p>
     </div>
     <div style="width:70px"></div>
   </div>
@@ -255,7 +75,6 @@
 
   <div class="main">
 
-    <!-- Add Customer -->
     <div class="card">
       <div class="card-title">➕ Add New Customer</div>
       <div class="form-row">
@@ -287,7 +106,6 @@
       <button class="btn-save" id="addBtn" onclick="addCustomer()">➕ Add Customer</button>
     </div>
 
-    <!-- Customers List -->
     <div class="card">
       <div class="card-title">📋 Active Customers — This Month's Accounts</div>
       <div id="customersList">
@@ -297,7 +115,6 @@
 
   </div>
 
-  <!-- Payment Modal -->
   <div class="modal-overlay" id="paymentModal">
     <div class="modal">
       <h3>💰 Record Payment</h3>
@@ -336,7 +153,7 @@
     const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
     window.addEventListener('load', async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) { window.location.href = 'index.html'; return; }
 
       const now = new Date();
@@ -367,7 +184,7 @@
       btn.disabled = true;
       btn.textContent = 'Saving...';
 
-      const { error } = await supabase.from('customers').insert({
+      const { error } = await supabaseClient.from('customers').insert({
         name, phone, address, milk_rate: milkRate, yogurt_rate: yogurtRate
       });
 
@@ -389,7 +206,7 @@
     }
 
     async function loadCustomers() {
-      const { data: customers } = await supabase
+      const { data: customers } = await supabaseClient
         .from('customers')
         .select('*')
         .eq('is_active', true)
@@ -404,8 +221,7 @@
 
       let html = '';
       for (const c of customers) {
-        // Current month account
-        const { data: account } = await supabase
+        const { data: account } = await supabaseClient
           .from('customer_monthly_accounts')
           .select('*')
           .eq('customer_id', c.id)
@@ -417,8 +233,7 @@
         const paid = account?.total_paid || 0;
         const balance = delivered - paid;
 
-        // Previous months with balance
-        const { data: prevAccounts } = await supabase
+        const { data: prevAccounts } = await supabaseClient
           .from('customer_monthly_accounts')
           .select('*')
           .eq('customer_id', c.id)
@@ -498,10 +313,10 @@
       const now = new Date();
       const today = now.toISOString().split('T')[0];
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       const userId = session.user.id;
 
-      await supabase.from('customer_payments').insert({
+      await supabaseClient.from('customer_payments').insert({
         customer_id: currentCustomerId,
         payment_date: today,
         month: currentMonth,
@@ -512,7 +327,7 @@
         created_by: userId
       });
 
-      const { data: account } = await supabase
+      const { data: account } = await supabaseClient
         .from('customer_monthly_accounts')
         .select('*')
         .eq('customer_id', currentCustomerId)
@@ -521,11 +336,11 @@
         .single();
 
       if (account) {
-        await supabase.from('customer_monthly_accounts')
+        await supabaseClient.from('customer_monthly_accounts')
           .update({ total_paid: account.total_paid + amount })
           .eq('id', account.id);
       } else {
-        await supabase.from('customer_monthly_accounts').insert({
+        await supabaseClient.from('customer_monthly_accounts').insert({
           customer_id: currentCustomerId,
           month: currentMonth,
           year: currentYear,
@@ -540,7 +355,7 @@
 
     async function deactivateCustomer(id) {
       if (!confirm('Remove this customer from active list?')) return;
-      await supabase.from('customers').update({ is_active: false }).eq('id', id);
+      await supabaseClient.from('customers').update({ is_active: false }).eq('id', id);
       loadCustomers();
     }
   </script>

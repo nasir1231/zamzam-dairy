@@ -9,158 +9,31 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
-    .header {
-      background: #1a5c2a;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .header { background: #1a5c2a; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
     .header-title { text-align: center; flex: 1; }
     .header-title h1 { font-size: 18px; font-weight: 700; }
     .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-    .btn-back {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 7px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      text-decoration: none;
-    }
-    .date-bar {
-      background: #e8f5e9;
-      padding: 10px 20px;
-      text-align: center;
-      font-size: 14px;
-      color: #1a5c2a;
-      font-weight: 600;
-      border-bottom: 1px solid #c8e6c9;
-    }
+    .btn-back { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; text-decoration: none; }
+    .date-bar { background: #e8f5e9; padding: 10px 20px; text-align: center; font-size: 14px; color: #1a5c2a; font-weight: 600; border-bottom: 1px solid #c8e6c9; }
     .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      margin-bottom: 20px;
-    }
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a5c2a;
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e8f5e9;
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
+    .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #1a5c2a; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e8f5e9; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
     .form-group { margin-bottom: 15px; }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: border 0.2s;
-    }
+    .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 600; }
+    .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s; }
     .form-group input:focus, .form-group select:focus { border-color: #1a5c2a; }
-    .supplier-entry {
-      background: #f9fef9;
-      border: 1px solid #e8f5e9;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 12px;
-      position: relative;
-    }
-    .supplier-entry .remove-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #ffe8e8;
-      color: #c0392b;
-      border: none;
-      border-radius: 5px;
-      padding: 4px 10px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .btn-add-supplier {
-      width: 100%;
-      padding: 10px;
-      background: #e8f5e9;
-      color: #1a5c2a;
-      border: 2px dashed #1a5c2a;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 15px;
-    }
+    .supplier-entry { background: #f9fef9; border: 1px solid #e8f5e9; border-radius: 8px; padding: 15px; margin-bottom: 12px; position: relative; }
+    .supplier-entry .remove-btn { position: absolute; top: 10px; right: 10px; background: #ffe8e8; color: #c0392b; border: none; border-radius: 5px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
+    .btn-add-supplier { width: 100%; padding: 10px; background: #e8f5e9; color: #1a5c2a; border: 2px dashed #1a5c2a; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; margin-bottom: 15px; }
     .btn-add-supplier:hover { background: #d0ebd0; }
-    .total-display {
-      background: #e8f5e9;
-      border-radius: 8px;
-      padding: 12px 15px;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-weight: 600;
-      color: #1a5c2a;
-    }
-    .btn-save {
-      width: 100%;
-      padding: 13px;
-      background: #1a5c2a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .total-display { background: #e8f5e9; border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600; color: #1a5c2a; }
+    .btn-save { width: 100%; padding: 13px; background: #1a5c2a; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
     .btn-save:hover { background: #144d22; }
     .btn-save:disabled { background: #aaa; cursor: not-allowed; }
-    .success-msg {
-      background: #e8f5e9;
-      color: #1a5c2a;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 600;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .error-msg {
-      background: #ffe8e8;
-      color: #c0392b;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .footer {
-      background: #1a5c2a;
-      color: white;
-      text-align: center;
-      padding: 12px 20px;
-      font-size: 12px;
-    }
+    .success-msg { background: #e8f5e9; color: #1a5c2a; padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; margin-bottom: 15px; display: none; }
+    .error-msg { background: #ffe8e8; color: #c0392b; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; display: none; }
+    .footer { background: #1a5c2a; color: white; text-align: center; padding: 12px 20px; font-size: 12px; }
     .footer a { color: #a8d5b5; text-decoration: none; }
     @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
   </style>
@@ -180,7 +53,6 @@
 
   <div class="main">
 
-    <!-- Evening Stock Check -->
     <div class="card">
       <div class="card-title">📦 Current Stock at 6pm</div>
       <div class="form-row">
@@ -195,7 +67,6 @@
       </div>
     </div>
 
-    <!-- Evening Supply -->
     <div class="card">
       <div class="card-title">🚜 Evening Milk Supply</div>
       <div id="suppliersList"></div>
@@ -226,14 +97,14 @@
     let supplierEntries = [];
 
     window.addEventListener('load', async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) { window.location.href = 'index.html'; return; }
 
       const now = new Date();
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
 
-      const { data } = await supabase.from('suppliers').select('*').eq('is_active', true).order('name');
+      const { data } = await supabaseClient.from('suppliers').select('*').eq('is_active', true).order('name');
       suppliers = data || [];
       addSupplierEntry();
     });
@@ -318,13 +189,13 @@
       const month = now.getMonth() + 1;
       const year = now.getFullYear();
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       const userId = session.user.id;
 
       btn.disabled = true;
       btn.textContent = 'Saving...';
 
-      const { data: sessionData, error: sessionError } = await supabase
+      const { data: sessionData, error: sessionError } = await supabaseClient
         .from('stock_sessions')
         .insert({
           session_date: today,
@@ -350,7 +221,7 @@
         const price = parseFloat(document.getElementById('price-' + id)?.value) || 0;
         if (!supplierId || qty === 0) continue;
 
-        await supabase.from('purchases').insert({
+        await supabaseClient.from('purchases').insert({
           session_id: sessionData.id,
           supplier_id: supplierId,
           purchase_date: today,
@@ -360,7 +231,7 @@
           created_by: userId
         });
 
-        const { data: existing } = await supabase
+        const { data: existing } = await supabaseClient
           .from('supplier_monthly_accounts')
           .select('*')
           .eq('supplier_id', supplierId)
@@ -369,11 +240,11 @@
           .single();
 
         if (existing) {
-          await supabase.from('supplier_monthly_accounts')
+          await supabaseClient.from('supplier_monthly_accounts')
             .update({ total_purchased: existing.total_purchased + (qty * price) })
             .eq('id', existing.id);
         } else {
-          await supabase.from('supplier_monthly_accounts').insert({
+          await supabaseClient.from('supplier_monthly_accounts').insert({
             supplier_id: supplierId, month, year,
             total_purchased: qty * price, total_paid: 0
           });

@@ -10,7 +10,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Header */
     .header {
       background: #1a5c2a;
       color: white;
@@ -34,7 +33,6 @@
     }
     .btn-logout:hover { background: rgba(255,255,255,0.3); }
 
-    /* Date bar */
     .date-bar {
       background: #e8f5e9;
       padding: 10px 20px;
@@ -45,10 +43,8 @@
       border-bottom: 1px solid #c8e6c9;
     }
 
-    /* Main content */
     .main { flex: 1; padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; }
 
-    /* Stats Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -68,7 +64,6 @@
     .stat-card .value { font-size: 22px; font-weight: 700; color: #1a5c2a; }
     .stat-card .label { font-size: 12px; color: #888; margin-top: 4px; }
 
-    /* Modules Grid */
     .section-title {
       font-size: 16px;
       font-weight: 700;
@@ -105,7 +100,6 @@
     .module-btn .name { font-size: 13px; font-weight: 600; color: #333; }
     .module-btn .desc { font-size: 11px; color: #888; margin-top: 3px; }
 
-    /* Today summary */
     .summary-box {
       background: white;
       border-radius: 10px;
@@ -126,7 +120,6 @@
     .summary-row.profit .value { color: #1a5c2a; font-size: 16px; }
     .summary-row.loss .value { color: #c0392b; font-size: 16px; }
 
-    /* Footer */
     .footer {
       background: #1a5c2a;
       color: white;
@@ -141,24 +134,20 @@
 </head>
 <body>
 
-  <!-- Header -->
   <div class="header">
     <div style="width:80px"></div>
     <div class="header-title">
       <h1>ZamZam Fresh Dairy Products</h1>
-      <div class="amp">&</div>
+      <div class="amp">&amp;</div>
       <h2>subzi.pk</h2>
     </div>
     <button class="btn-logout" onclick="handleLogout()">Logout</button>
   </div>
 
-  <!-- Date -->
   <div class="date-bar" id="dateBar">Loading...</div>
 
-  <!-- Main -->
   <div class="main">
 
-    <!-- Today Stats -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="icon">🥛</div>
@@ -187,18 +176,17 @@
       </div>
     </div>
 
-    <!-- Quick Entry Modules -->
     <div class="section-title">📋 Daily Entry</div>
     <div class="modules-grid">
       <a href="morning.html" class="module-btn">
         <span class="icon">🌅</span>
         <span class="name">Morning</span>
-        <span class="desc">6am stock & supply</span>
+        <span class="desc">6am stock &amp; supply</span>
       </a>
       <a href="afternoon.html" class="module-btn">
         <span class="icon">☀️</span>
         <span class="name">Afternoon</span>
-        <span class="desc">1pm stock & supply</span>
+        <span class="desc">1pm stock &amp; supply</span>
       </a>
       <a href="evening.html" class="module-btn">
         <span class="icon">🌆</span>
@@ -227,9 +215,131 @@
       </a>
     </div>
 
-    <!-- Management Modules -->
     <div class="section-title">⚙️ Management</div>
     <div class="modules-grid">
       <a href="suppliers.html" class="module-btn">
         <span class="icon">🚜</span>
-        <span
+        <span class="name">Suppliers</span>
+        <span class="desc">Manage &amp; payments</span>
+      </a>
+      <a href="customers.html" class="module-btn">
+        <span class="icon">👥</span>
+        <span class="name">Customers</span>
+        <span class="desc">Credit accounts</span>
+      </a>
+      <a href="reports.html" class="module-btn">
+        <span class="icon">📊</span>
+        <span class="name">Reports</span>
+        <span class="desc">Daily &amp; monthly PDF</span>
+      </a>
+    </div>
+
+    <div class="section-title">📅 Today's Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="label">Walk-in Sales</span>
+        <span class="value" id="sumWalkin">Rs 0</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Delivery Sales</span>
+        <span class="value" id="sumDelivery">Rs 0</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Total Sales</span>
+        <span class="value" id="sumTotal">Rs 0</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Total Expenses</span>
+        <span class="value" id="sumExpenses">Rs 0</span>
+      </div>
+      <div class="summary-row profit" id="profitRow">
+        <span class="label">💰 Net Profit</span>
+        <span class="value" id="sumProfit">Rs 0</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    📞 0300-4455771 &nbsp;|&nbsp; ✉️ admin@subzi.pk &nbsp;|&nbsp; 🌐 <a href="https://subzi.pk">subzi.pk</a>
+  </div>
+
+  <script>
+    window.addEventListener('load', async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+      loadDashboard();
+    });
+
+    async function loadDashboard() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
+
+      const today = now.toISOString().split('T')[0];
+
+      const { data: walkin } = await supabaseClient
+        .from('walkin_sales')
+        .select('total_amount')
+        .eq('sale_date', today);
+
+      const walkinTotal = walkin?.reduce((sum, r) => sum + (r.total_amount || 0), 0) || 0;
+
+      const { data: delivery } = await supabaseClient
+        .from('deliveries')
+        .select('total_amount')
+        .eq('delivery_date', today);
+
+      const deliveryTotal = delivery?.reduce((sum, r) => sum + (r.total_amount || 0), 0) || 0;
+
+      const { data: expenses } = await supabaseClient
+        .from('expenses')
+        .select('amount')
+        .eq('expense_date', today);
+
+      const expensesTotal = expenses?.reduce((sum, r) => sum + (r.amount || 0), 0) || 0;
+
+      const totalSales = walkinTotal + deliveryTotal;
+      const profit = totalSales - expensesTotal;
+
+      document.getElementById('todaySales').textContent = totalSales.toLocaleString();
+      document.getElementById('todayExpenses').textContent = expensesTotal.toLocaleString();
+      document.getElementById('todayProfit').textContent = profit.toLocaleString();
+
+      document.getElementById('sumWalkin').textContent = 'Rs ' + walkinTotal.toLocaleString();
+      document.getElementById('sumDelivery').textContent = 'Rs ' + deliveryTotal.toLocaleString();
+      document.getElementById('sumTotal').textContent = 'Rs ' + totalSales.toLocaleString();
+      document.getElementById('sumExpenses').textContent = 'Rs ' + expensesTotal.toLocaleString();
+      document.getElementById('sumProfit').textContent = 'Rs ' + profit.toLocaleString();
+
+      const profitRow = document.getElementById('profitRow');
+      if (profit < 0) {
+        profitRow.classList.remove('profit');
+        profitRow.classList.add('loss');
+        profitRow.querySelector('.label').textContent = '📉 Net Loss';
+      }
+
+      const { data: sessions } = await supabaseClient
+        .from('stock_sessions')
+        .select('opening_milk_kg, opening_yogurt_kg')
+        .eq('session_date', today)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (sessions && sessions.length > 0) {
+        document.getElementById('milkStock').textContent = sessions[0].opening_milk_kg + ' kg';
+        document.getElementById('yogurtStock').textContent = sessions[0].opening_yogurt_kg + ' kg';
+      } else {
+        document.getElementById('milkStock').textContent = '0 kg';
+        document.getElementById('yogurtStock').textContent = '0 kg';
+      }
+    }
+
+    async function handleLogout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'index.html';
+    }
+  </script>
+
+</body>
+</html>

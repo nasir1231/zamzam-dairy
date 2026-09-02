@@ -16,7 +16,6 @@
       flex-direction: column;
     }
 
-    /* Header */
     .header {
       background: #1a5c2a;
       color: white;
@@ -27,7 +26,6 @@
     .header .amp { font-size: 20px; margin: 6px 0; opacity: 0.9; }
     .header h2 { font-size: 20px; font-weight: 400; letter-spacing: 2px; }
 
-    /* Login Box */
     .login-wrapper {
       flex: 1;
       display: flex;
@@ -113,7 +111,6 @@
       text-align: center;
     }
 
-    /* Footer */
     .footer {
       background: #1a5c2a;
       color: white;
@@ -126,14 +123,12 @@
 </head>
 <body>
 
-  <!-- Header -->
   <div class="header">
     <h1>ZamZam Fresh Dairy Products</h1>
-    <div class="amp">&</div>
+    <div class="amp">&amp;</div>
     <h2>subzi.pk</h2>
   </div>
 
-  <!-- Login -->
   <div class="login-wrapper">
     <div class="login-box">
       <h3>🔐 Login</h3>
@@ -155,7 +150,6 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     📞 0300-4455771 &nbsp;|&nbsp; ✉️ admin@subzi.pk &nbsp;|&nbsp; 🌐 <a href="https://subzi.pk">subzi.pk</a>
   </div>
@@ -178,7 +172,7 @@
       btn.disabled = true;
       btn.textContent = 'Logging in...';
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
       if (error) {
         errorMsg.textContent = 'Invalid email or password. Please try again.';
@@ -188,18 +182,15 @@
         return;
       }
 
-      // Redirect to dashboard
       window.location.href = 'dashboard.html';
     }
 
-    // Allow Enter key to login
     document.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') handleLogin();
     });
 
-    // If already logged in redirect to dashboard
     window.addEventListener('load', async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) window.location.href = 'dashboard.html';
     });
   </script>

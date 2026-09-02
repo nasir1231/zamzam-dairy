@@ -9,156 +9,35 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: #f0f7f0; min-height: 100vh; display: flex; flex-direction: column; }
-    .header {
-      background: #1a5c2a;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .header { background: #1a5c2a; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
     .header-title { text-align: center; flex: 1; }
     .header-title h1 { font-size: 18px; font-weight: 700; }
     .header-title p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-    .btn-back {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.4);
-      padding: 7px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      text-decoration: none;
-    }
-    .date-bar {
-      background: #e8f5e9;
-      padding: 10px 20px;
-      text-align: center;
-      font-size: 14px;
-      color: #1a5c2a;
-      font-weight: 600;
-      border-bottom: 1px solid #c8e6c9;
-    }
+    .btn-back { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; text-decoration: none; }
+    .date-bar { background: #e8f5e9; padding: 10px 20px; text-align: center; font-size: 14px; color: #1a5c2a; font-weight: 600; border-bottom: 1px solid #c8e6c9; }
     .main { flex: 1; padding: 20px; max-width: 700px; margin: 0 auto; width: 100%; }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      margin-bottom: 20px;
-    }
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a5c2a;
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e8f5e9;
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
+    .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #1a5c2a; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e8f5e9; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
     .form-group { margin-bottom: 15px; }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: border 0.2s;
-    }
+    .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 600; }
+    .form-group input { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s; }
     .form-group input:focus { border-color: #1a5c2a; }
     .form-group input[readonly] { background: #f5f5f5; }
-    .total-display {
-      background: #1a5c2a;
-      border-radius: 8px;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      color: white;
-    }
+    .total-display { background: #1a5c2a; border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white; }
     .total-display .label { font-size: 14px; opacity: 0.9; }
     .total-display .amount { font-size: 24px; font-weight: 700; }
-    .btn-save {
-      width: 100%;
-      padding: 13px;
-      background: #1a5c2a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .btn-save { width: 100%; padding: 13px; background: #1a5c2a; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
     .btn-save:hover { background: #144d22; }
     .btn-save:disabled { background: #aaa; cursor: not-allowed; }
-    .success-msg {
-      background: #e8f5e9;
-      color: #1a5c2a;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 600;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .error-msg {
-      background: #ffe8e8;
-      color: #c0392b;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .history-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .history-table th {
-      background: #e8f5e9;
-      padding: 10px;
-      text-align: left;
-      color: #1a5c2a;
-      font-weight: 600;
-    }
-    .history-table td {
-      padding: 10px;
-      border-bottom: 1px solid #f0f0f0;
-      color: #333;
-    }
+    .success-msg { background: #e8f5e9; color: #1a5c2a; padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; margin-bottom: 15px; display: none; }
+    .error-msg { background: #ffe8e8; color: #c0392b; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; display: none; }
+    .history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .history-table th { background: #e8f5e9; padding: 10px; text-align: left; color: #1a5c2a; font-weight: 600; }
+    .history-table td { padding: 10px; border-bottom: 1px solid #f0f0f0; color: #333; }
     .history-table tr:last-child td { border-bottom: none; }
-    .today-total {
-      background: #e8f5e9;
-      border-radius: 8px;
-      padding: 12px 15px;
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
-      color: #1a5c2a;
-      margin-top: 10px;
-    }
-    .footer {
-      background: #1a5c2a;
-      color: white;
-      text-align: center;
-      padding: 12px 20px;
-      font-size: 12px;
-    }
+    .today-total { background: #e8f5e9; border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; font-weight: 700; color: #1a5c2a; margin-top: 10px; }
+    .footer { background: #1a5c2a; color: white; text-align: center; padding: 12px 20px; font-size: 12px; }
     .footer a { color: #a8d5b5; text-decoration: none; }
     @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
   </style>
@@ -171,4 +50,205 @@
       <h1>🛒 Walk-in Sales</h1>
       <p>Shop Counter Sales</p>
     </div>
-    <div
+    <div style="width:70px"></div>
+  </div>
+
+  <div class="date-bar" id="dateBar">Loading...</div>
+
+  <div class="main">
+
+    <div class="card">
+      <div class="card-title">💰 New Sale Entry</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Milk Quantity (kg)</label>
+          <input type="number" id="milkKg" placeholder="0.00" step="0.01" min="0" oninput="updateTotal()" />
+        </div>
+        <div class="form-group">
+          <label>Milk Rate (Rs/kg)</label>
+          <input type="number" id="milkRate" value="250" step="0.01" min="0" oninput="updateTotal()" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Yogurt Quantity (kg)</label>
+          <input type="number" id="yogurtKg" placeholder="0.00" step="0.01" min="0" oninput="updateTotal()" />
+        </div>
+        <div class="form-group">
+          <label>Yogurt Rate (Rs/kg)</label>
+          <input type="number" id="yogurtRate" value="260" step="0.01" min="0" oninput="updateTotal()" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Milk Subtotal</label>
+          <input type="text" id="milkSubtotal" value="Rs 0" readonly />
+        </div>
+        <div class="form-group">
+          <label>Yogurt Subtotal</label>
+          <input type="text" id="yogurtSubtotal" value="Rs 0" readonly />
+        </div>
+      </div>
+
+      <div class="total-display">
+        <span class="label">💰 Total Amount</span>
+        <span class="amount" id="totalAmount">Rs 0</span>
+      </div>
+
+      <div class="success-msg" id="successMsg">✅ Sale recorded successfully!</div>
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button class="btn-save" id="saveBtn" onclick="saveSale()">💾 Save Sale</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Today's Sales</div>
+      <div id="historyContent">
+        <p style="color:#888; font-size:13px; text-align:center; padding:15px;">Loading...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    📞 0300-4455771 &nbsp;|&nbsp; ✉️ admin@subzi.pk &nbsp;|&nbsp; 🌐 <a href="https://subzi.pk">subzi.pk</a>
+  </div>
+
+  <script>
+    window.addEventListener('load', async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('dateBar').textContent = '📅 ' + now.toLocaleDateString('en-PK', options);
+
+      loadHistory();
+    });
+
+    function updateTotal() {
+      const milkKg = parseFloat(document.getElementById('milkKg').value) || 0;
+      const milkRate = parseFloat(document.getElementById('milkRate').value) || 0;
+      const yogurtKg = parseFloat(document.getElementById('yogurtKg').value) || 0;
+      const yogurtRate = parseFloat(document.getElementById('yogurtRate').value) || 0;
+
+      const milkSubtotal = milkKg * milkRate;
+      const yogurtSubtotal = yogurtKg * yogurtRate;
+      const total = milkSubtotal + yogurtSubtotal;
+
+      document.getElementById('milkSubtotal').value = 'Rs ' + milkSubtotal.toLocaleString();
+      document.getElementById('yogurtSubtotal').value = 'Rs ' + yogurtSubtotal.toLocaleString();
+      document.getElementById('totalAmount').textContent = 'Rs ' + total.toLocaleString();
+    }
+
+    async function loadHistory() {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+
+      const { data } = await supabaseClient
+        .from('walkin_sales')
+        .select('*')
+        .eq('sale_date', today)
+        .order('created_at', { ascending: false });
+
+      const container = document.getElementById('historyContent');
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p style="color:#888; font-size:13px; text-align:center; padding:15px;">No sales recorded today yet.</p>';
+        return;
+      }
+
+      let totalDay = 0;
+      let html = `<table class="history-table">
+        <thead>
+          <tr>
+            <th>Milk (kg)</th>
+            <th>Yogurt (kg)</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+      data.forEach(row => {
+        totalDay += row.total_amount || 0;
+        html += `<tr>
+          <td>${row.milk_kg > 0 ? row.milk_kg + ' kg @ Rs' + row.milk_rate : '--'}</td>
+          <td>${row.yogurt_kg > 0 ? row.yogurt_kg + ' kg @ Rs' + row.yogurt_rate : '--'}</td>
+          <td>Rs ${(row.total_amount || 0).toLocaleString()}</td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>
+        <div class="today-total">
+          <span>Today's Total Sales</span>
+          <span>Rs ${totalDay.toLocaleString()}</span>
+        </div>`;
+
+      container.innerHTML = html;
+    }
+
+    async function saveSale() {
+      const btn = document.getElementById('saveBtn');
+      const successMsg = document.getElementById('successMsg');
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      const milkKg = parseFloat(document.getElementById('milkKg').value) || 0;
+      const milkRate = parseFloat(document.getElementById('milkRate').value) || 250;
+      const yogurtKg = parseFloat(document.getElementById('yogurtKg').value) || 0;
+      const yogurtRate = parseFloat(document.getElementById('yogurtRate').value) || 260;
+
+      if (milkKg === 0 && yogurtKg === 0) {
+        errorMsg.textContent = 'Please enter milk or yogurt quantity.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const month = now.getMonth() + 1;
+      const year = now.getFullYear();
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      const userId = session.user.id;
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const { error } = await supabaseClient.from('walkin_sales').insert({
+        sale_date: today,
+        month, year,
+        milk_kg: milkKg,
+        milk_rate: milkRate,
+        yogurt_kg: yogurtKg,
+        yogurt_rate: yogurtRate,
+        created_by: userId
+      });
+
+      if (error) {
+        errorMsg.textContent = 'Error: ' + error.message;
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '💾 Save Sale';
+        return;
+      }
+
+      successMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '💾 Save Sale';
+
+      document.getElementById('milkKg').value = '';
+      document.getElementById('yogurtKg').value = '';
+      document.getElementById('milkRate').value = '250';
+      document.getElementById('yogurtRate').value = '260';
+      updateTotal();
+      loadHistory();
+    }
+  </script>
+
+</body>
+</html>
